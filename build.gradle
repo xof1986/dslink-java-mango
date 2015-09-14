@@ -1,0 +1,31 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+version '1.0'
+
+mainClassName = 'org.dsa.iot.mango.Main'
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'https://oss.sonatype.org/content/repositories/snapshots/'
+    }
+}
+
+dependencies {
+    compile 'org.iot-dsa:dslink:0.9.0-SNAPSHOT'
+    compile 'io.swagger:swagger-annotations:1.5.3'
+    compile 'com.sun.jersey:jersey-client:1.19'
+    compile 'com.sun.jersey.contribs:jersey-multipart:1.19'
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-joda:2.6.1'
+    compile 'org.iot-dsa:historian:0.9.0-SNAPSHOT'
+}
+
+run {
+    args System.getProperty("exec.args", "").split()
+    workingDir project.buildDir
+}
+
+applicationDistribution.from new File(project.projectDir, "/dslink.json")
