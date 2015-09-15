@@ -67,7 +67,8 @@ public class MangoBodyBuilder {
                     model.setDisabled(jo.getBoolean("disabled"));
                     model.setPassword(jo.getString("password"));
                     model.setHomeUrl(jo.getString("homeUrl"));
-                    model.setReceiveAlarmEmails(UserModel.ReceiveAlarmEmailsEnum.valueOf(jo.getString("receiveAlarmEmails")));
+                    model.setReceiveAlarmEmails(UserModel.ReceiveAlarmEmailsEnum
+                            .valueOf(jo.getString("receiveAlarmEmails")));
                     model.setMuted(jo.getBoolean("muted"));
                     model.setTimezone(jo.getString("timezone"));
                     model.setSystemTimezone(jo.getString("systemTimezone"));
@@ -180,7 +181,8 @@ public class MangoBodyBuilder {
                 m.setPointLocator(plvo);
                 m.setDeviceName(jo.getString("deviceName"));
                 m.setUnit(jo.getString("unit"));
-                DataPointModel.DataTypeEnum dataType = DataPointModel.DataTypeEnum.valueOf(jo.getString("dataType"));
+                DataPointModel.DataTypeEnum dataType = DataPointModel.DataTypeEnum
+                        .valueOf(jo.getString("dataType"));
                 m.setDataType(dataType);
                 JsonObject l = jo.getObject("loggingProperties");
                 LoggingProperties lp = new LoggingProperties();
@@ -198,7 +200,8 @@ public class MangoBodyBuilder {
                 mo.setValue(jo.getValue("value"));
                 mo.setTimestamp(jo.getLong("timestamp"));
                 mo.setAnnotation(jo.getString("annotation"));
-                PointValueTimeModel.DataTypeEnum dt = PointValueTimeModel.DataTypeEnum.valueOf(jo.getString("dataType"));
+                PointValueTimeModel.DataTypeEnum dt = PointValueTimeModel.DataTypeEnum
+                        .valueOf(jo.getString("dataType"));
                 mo.setDataType(dt);
                 instance = mo;
                 break;

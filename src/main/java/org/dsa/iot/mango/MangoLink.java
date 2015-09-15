@@ -71,7 +71,8 @@ public class MangoLink {
         act.addParameter(new Parameter("Name", ValueType.STRING).setPlaceHolder("Local Host"));
         act.addParameter(new Parameter("URL", ValueType.STRING).setPlaceHolder("http://localhost:8000/rest"));
         act.addParameter(new Parameter("Username", ValueType.STRING).setPlaceHolder("admin"));
-        act.addParameter(new Parameter("Password", ValueType.STRING).setPlaceHolder("admin").setEditorType(EditorType.PASSWORD));
+        act.addParameter(new Parameter("Password", ValueType.STRING).setPlaceHolder("admin")
+                .setEditorType(EditorType.PASSWORD));
         act.addParameter(new Parameter("Default Polling Interval", ValueType.NUMBER, new Value(updateRate)));
         return act;
     }

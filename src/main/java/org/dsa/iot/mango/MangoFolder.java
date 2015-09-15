@@ -100,7 +100,8 @@ public class MangoFolder {
                 conn.setUpdateRate(delay);
                 updateHandle.cancel(true);
                 ScheduledThreadPoolExecutor stpe = Objects.getDaemonThreadPool();
-                updateHandle = stpe.scheduleAtFixedRate(update, conn.getUpdateRate(), conn.getUpdateRate(), TimeUnit.SECONDS);
+                updateHandle = stpe.scheduleAtFixedRate(update, conn.getUpdateRate(), conn.getUpdateRate(),
+                        TimeUnit.SECONDS);
             }
         }
     }
@@ -203,7 +204,8 @@ public class MangoFolder {
                 }
             }
         };
-        updateHandle = stpe.scheduleAtFixedRate(update, conn.getUpdateRate(), conn.getUpdateRate(), TimeUnit.SECONDS);
+        updateHandle = stpe.scheduleAtFixedRate(update, conn.getUpdateRate(), conn.getUpdateRate(),
+                TimeUnit.SECONDS);
     }
 
     //create action object for deleting the data point
@@ -224,7 +226,8 @@ public class MangoFolder {
                 api.delete(node.getAttribute("xid").getString()); //produces an exception
                 updateHandle.cancel(true);
                 nodesToUpdate.remove(node);
-                updateHandle = stpe.scheduleAtFixedRate(update, conn.getUpdateRate(), conn.getUpdateRate(), TimeUnit.SECONDS);
+                updateHandle = stpe.scheduleAtFixedRate(update, conn.getUpdateRate(), conn.getUpdateRate(),
+                        TimeUnit.SECONDS);
                 Node parent = node.getParent();
                 parent.removeChild(node);
                 getHierarchy();
@@ -237,7 +240,8 @@ public class MangoFolder {
                 //the code below ensures that the rest of the method performs its duties
                 updateHandle.cancel(true);
                 nodesToUpdate.remove(node);
-                updateHandle = stpe.scheduleAtFixedRate(update, conn.getUpdateRate(), conn.getUpdateRate(), TimeUnit.SECONDS);
+                updateHandle = stpe.scheduleAtFixedRate(update, conn.getUpdateRate(), conn.getUpdateRate(),
+                        TimeUnit.SECONDS);
                 Node parent = node.getParent();
                 parent.removeChild(node);
                 LOGGER.info("Data point deleted - {}", name);

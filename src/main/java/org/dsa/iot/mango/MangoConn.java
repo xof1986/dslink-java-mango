@@ -82,7 +82,8 @@ public class MangoConn {
             MangoFolder mf = new MangoFolder(node, api, this);
             mf.init();
         } catch (ApiException e) {
-            LOGGER.error("setLogin\n\tcode: {}\n\tmessage: {}\n\theader: {}\n\tbody: {}\n{}", e.getCode(), e.getMessage(), e.getResponseHeaders(), e.getResponseBody(), e);
+            LOGGER.error("setLogin\n\tcode: {}\n\tmessage: {}\n\theader: {}\n\tbody: {}\n{}",
+                    e.getCode(), e.getMessage(), e.getResponseHeaders(), e.getResponseBody(), e);
             Node parent = node.getParent();
             parent.removeChild(node);
         } catch (Exception e) {
@@ -99,7 +100,8 @@ public class MangoConn {
             client.setCookie("");
             LOGGER.info("{} logged out", node.getAttribute("username"));
         } catch (ApiException e) {
-            LOGGER.error("logout\n\tcode: {}\n\tmessage: {}\n\theader: {}\n\tbody: {}\n{}", e.getCode(), e.getMessage(), e.getResponseHeaders(), e.getResponseBody(), e);
+            LOGGER.error("logout\n\tcode: {}\n\tmessage: {}\n\theader: {}\n\tbody: {}\n{}",
+                    e.getCode(), e.getMessage(), e.getResponseHeaders(), e.getResponseBody(), e);
         }
         Node parent = node.getParent();
         parent.removeChild(node);
