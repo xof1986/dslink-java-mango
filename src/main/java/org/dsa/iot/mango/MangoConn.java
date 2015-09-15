@@ -15,10 +15,38 @@ public class MangoConn {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MangoConn.class);
 
-    protected MangoLink link;
+    private MangoLink link;
     private Node node;
-    protected ApiClient client;
-    protected MangoDSLApi api;
+    private ApiClient client;
+    private MangoDSLApi api;
+
+    public MangoDSLApi getApi() {
+        return api;
+    }
+
+    public void setClientNode(Node node) {
+        client.setNode(node);
+    }
+
+    public Node getClientNode() {
+        return client.getNode();
+    }
+
+    public void setClientFolder(MangoFolder mf) {
+        client.setFolder(mf);
+    }
+
+    public void setClientUrl(String url) {
+        client.setBasePath(url);
+    }
+
+    public void setUpdateRate(int rate) {
+        link.setUpdateRate(rate);
+    }
+
+    public int getUpdateRate() {
+        return link.getUpdateRate();
+    }
 
     //initialize global variables
     public MangoConn(MangoLink link, Node child) {
@@ -46,19 +74,15 @@ public class MangoConn {
         try {
             String password = String.valueOf(node.getPassword());
             ResponseEntityUserModel user = api.loginPost(node.getAttribute("username").getString(), password);
-            String sc = user.getStatusCode().toString();
-            String b = user.getBody().toString();
-            String h = user.getHeaders().toString();
             if (client.getCookie().equals("")) {
                 String cookie = user.getHeaders().getCookie().split(";")[0].replaceAll("\\[", "");
                 client.setCookie(cookie);
             }
-            //LOGGER.info("Log in procedure\nStatus code:\t{}\nBody:\t{}\nHeaders:\t{}\n", sc, b, h);
             LOGGER.info("{} logged in", node.getAttribute("username"));
-            MangoFolder mf = new MangoFolder(node, api, client, getMe());
+            MangoFolder mf = new MangoFolder(node, api, this);
             mf.init();
         } catch (ApiException e) {
-            LOGGER.info("setLogin\n\tcode: {}\n\tmessage: {}\n\theader: {}\n\tbody: {}\n{}", e.getCode(), e.getMessage(), e.getResponseHeaders(), e.getResponseBody(), e);
+            LOGGER.error("setLogin\n\tcode: {}\n\tmessage: {}\n\theader: {}\n\tbody: {}\n{}", e.getCode(), e.getMessage(), e.getResponseHeaders(), e.getResponseBody(), e);
             Node parent = node.getParent();
             parent.removeChild(node);
         } catch (Exception e) {
@@ -75,11 +99,10 @@ public class MangoConn {
             client.setCookie("");
             LOGGER.info("{} logged out", node.getAttribute("username"));
         } catch (ApiException e) {
-            LOGGER.info("logout\n\tcode: {}\n\tmessage: {}\n\theader: {}\n\tbody: {}\n{}", e.getCode(), e.getMessage(), e.getResponseHeaders(), e.getResponseBody(), e);
+            LOGGER.error("logout\n\tcode: {}\n\tmessage: {}\n\theader: {}\n\tbody: {}\n{}", e.getCode(), e.getMessage(), e.getResponseHeaders(), e.getResponseBody(), e);
         }
         Node parent = node.getParent();
         parent.removeChild(node);
     }
 
-    private MangoConn getMe() { return this; }
 }

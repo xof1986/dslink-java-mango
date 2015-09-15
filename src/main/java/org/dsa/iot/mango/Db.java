@@ -1,6 +1,7 @@
 package org.dsa.iot.mango;
 
 import io.swagger.client.ApiException;
+import io.swagger.client.api.MangoDSLApi;
 import io.swagger.client.model.JsonArrayStream;
 import io.swagger.client.model.ResponseEntityJsonArrayStream;
 import org.dsa.iot.dslink.node.Node;
@@ -24,12 +25,12 @@ import java.util.List;
 public class Db extends Database {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Db.class);
-    private final MangoFolder folder;
+    private final MangoDSLApi api;
 
     //set the global variables
-    public Db(String name, MangoFolder folder) {
+    public Db(String name, MangoDSLApi api) {
         super(name, null);
-        this.folder = folder;
+        this.api = api;
     }
 
     @Override
@@ -43,7 +44,7 @@ public class Db extends Database {
         try {
             Date f = new Date(from);
             Date t = new Date(to);
-            ResponseEntityJsonArrayStream[] rejas = folder.api.getPointValues(path, f, t, null, null, null);
+            ResponseEntityJsonArrayStream[] rejas = api.getPointValues(path, f, t, null, null, null);
             ResponseEntityJsonArrayStream j = rejas[0];
             JsonArrayStream jas = j.getBody();
             List<JsonObject> list = jas.getJsonArray();

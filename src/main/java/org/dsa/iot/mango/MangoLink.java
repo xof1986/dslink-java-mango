@@ -21,7 +21,15 @@ public class MangoLink {
     private static final Logger LOGGER = LoggerFactory.getLogger(MangoLink.class);
 
     private Node node;
-    protected int updateRate = 5;
+    private int updateRate = 5;
+
+    protected int getUpdateRate() {
+        return updateRate;
+    }
+
+    protected void setUpdateRate(int rate) {
+        updateRate = rate;
+    }
 
     public MangoLink (Node node) {
         this.node = node;
@@ -35,7 +43,7 @@ public class MangoLink {
 
     //initialize the link session and add the connection action
     private void init() {
-        //node.clearChildren();  //used for testing purposes
+        node.clearChildren();  //used for testing purposes
 
         restoreLastSession();
 
@@ -49,7 +57,7 @@ public class MangoLink {
         if (node.getChildren() == null) return;
         for (Node child: node.getChildren().values()) {
             if (child.getAttribute("url") != null) {
-                MangoConn conn = new MangoConn(getMe(), child);
+                MangoConn conn = new MangoConn(this, child);
                 conn.start();
             } else if (child.getAction() == null) {
                 node.removeChild(child);
@@ -60,33 +68,33 @@ public class MangoLink {
     //set up action for setting the connection information
     private Action setPathAction() {
         Action act = new Action(Permission.READ, new CreateConnHandler());
-        act.addParameter(new Parameter("name", ValueType.STRING).setPlaceHolder("Local Host"));
-        act.addParameter(new Parameter("url", ValueType.STRING).setPlaceHolder("http://localhost:8000/rest"));
-        act.addParameter(new Parameter("username", ValueType.STRING).setPlaceHolder("admin"));
-        act.addParameter(new Parameter("password", ValueType.STRING).setPlaceHolder("admin").setEditorType(EditorType.PASSWORD));
-        act.addParameter(new Parameter("default polling interval", ValueType.NUMBER, new Value(updateRate)));
+        act.addParameter(new Parameter("Name", ValueType.STRING).setPlaceHolder("Local Host"));
+        act.addParameter(new Parameter("URL", ValueType.STRING).setPlaceHolder("http://localhost:8000/rest"));
+        act.addParameter(new Parameter("Username", ValueType.STRING).setPlaceHolder("admin"));
+        act.addParameter(new Parameter("Password", ValueType.STRING).setPlaceHolder("admin").setEditorType(EditorType.PASSWORD));
+        act.addParameter(new Parameter("Default Polling Interval", ValueType.NUMBER, new Value(updateRate)));
         return act;
     }
 
     //receive URL path and label information as well as username and password,
     //then build the host level node
     private class CreateConnHandler implements Handler<ActionResult> {
+        @Override
         public void handle(ActionResult event) {
-            String url = event.getParameter("url", ValueType.STRING).getString();
-            String name = event.getParameter("name", ValueType.STRING).getString();
-            String username = event.getParameter("username", ValueType.STRING).getString();
-            String pw = event.getParameter("password", ValueType.STRING).getString();
-            updateRate = event.getParameter("default polling interval", ValueType.NUMBER).getNumber().intValue();
+            String url = event.getParameter("URL", ValueType.STRING).getString();
+            String name = event.getParameter("Name", ValueType.STRING).getString();
+            String username = event.getParameter("Username", ValueType.STRING).getString();
+            String pw = event.getParameter("Password", ValueType.STRING).getString();
+            updateRate = event.getParameter("Default Polling Interval", ValueType.NUMBER).getNumber().intValue();
             NodeBuilder b = node.createChild(name);
             b.setAttribute("url", new Value(url));
             b.setAttribute("username", new Value(username));
             b.setPassword(pw.toCharArray());
+            b.setAttribute("updateRate", new Value(updateRate));
             Node child = b.build();
             LOGGER.info("Base URL set - {}", child.getAttribute("url"));
-            MangoConn conn = new MangoConn(getMe(), child);
+            MangoConn conn = new MangoConn(MangoLink.this, child);
             conn.start();
         }
     }
-
-    private MangoLink getMe() { return this; }
 }

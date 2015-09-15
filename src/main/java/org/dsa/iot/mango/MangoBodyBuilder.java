@@ -1,13 +1,12 @@
 package org.dsa.iot.mango;
 
 import io.swagger.client.ApiException;
+import io.swagger.client.api.MangoDSLApi;
 import io.swagger.client.model.*;
 import org.dsa.iot.dslink.node.Node;
 import org.dsa.iot.dslink.node.NodeBuilder;
-import org.dsa.iot.dslink.node.Permission;
 import org.dsa.iot.dslink.node.Writable;
 import org.dsa.iot.dslink.node.actions.Action;
-import org.dsa.iot.dslink.node.actions.ActionResult;
 import org.dsa.iot.dslink.node.value.Value;
 import org.dsa.iot.dslink.node.value.ValuePair;
 import org.dsa.iot.dslink.node.value.ValueType;
@@ -20,7 +19,6 @@ import org.vertx.java.core.json.JsonObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Peter Weise on 9/4/15.
@@ -31,9 +29,11 @@ public class MangoBodyBuilder {
 
     private MangoConn conn;
     private MangoFolder folder;
+    private final MangoDSLApi api;
 
     public MangoBodyBuilder (MangoConn conn) {
         this.conn = conn;
+        this.api = conn.getApi();
     }
 
     public void setBuilder(MangoFolder folder) {
@@ -44,6 +44,7 @@ public class MangoBodyBuilder {
     //some of these models call bodyBuilder recursively
     //creation of nodes below the user node level is done here
     //or by helper methods called within this method
+    @SuppressWarnings("unchecked")
     public <T> T bodyBuilder(Class<?> ret, String body, Node node) throws ApiException {
         Object instance = null;
         final String clazzName = ret.getName();
@@ -220,58 +221,65 @@ public class MangoBodyBuilder {
     //helper method to build the DataPointSummaryModel body
     //and define data point attributes
     private DataPointSummaryModel pointBuilder(String point, Node node) {
-        JsonObject ob = new JsonObject(point);
-        DataPointSummaryModel model = new DataPointSummaryModel();
+        final JsonObject ob = new JsonObject(point);
+        final DataPointSummaryModel model = new DataPointSummaryModel();
+        final String name = ob.getString("name");
+
         NodeBuilder b = node.createChild(ob.getString("xid"));
-        b.setSerializable(false);
-        String name = ob.getString("name");
-        model.setName(name);
-        String nm = name.replaceAll("/", "_");
-        b.setDisplayName(nm);
-        b.setValueType(ValueType.STRING);
-        b.setValue(null);
-        b.setWritable(Writable.NEVER);
-        String dsxid = ob.getString("dataSourceXid");
-        model.setDataSourceXid(dsxid);
-        Value val = new Value(dsxid);
-        b.setAttribute("dataSourceXid", val);
-        Integer pfid = ob.getInteger("pointFolderId");
-        model.setPointFolderId(pfid);
-        val = new Value(pfid);
-        b.setAttribute("pointFolderId", val);
-        String xid = ob.getString("xid");
-        model.setXid(xid);
-        val = new Value(xid);
-        b.setAttribute("xid", val);
-        String deviceName = ob.getString("deviceName");
-        model.setDeviceName(deviceName);
-        val = new Value(deviceName);
-        b.setAttribute("deviceName", val);
+        {
+            b.setSerializable(false);
+            b.setDisplayName(name);
+            b.setValueType(ValueType.STRING);
+            b.setValue(null);
+            b.setWritable(Writable.NEVER);
+            model.setName(name);
+        }
+        {
+            String dsxid = ob.getString("dataSourceXid");
+            model.setDataSourceXid(dsxid);
+            Value val = new Value(dsxid);
+            b.setAttribute("dataSourceXid", val);
+        }
+
+        {
+            Integer pfid = ob.getInteger("pointFolderId");
+            model.setPointFolderId(pfid);
+            Value val = new Value(pfid);
+            b.setAttribute("pointFolderId", val);
+        }
+
+        final String xid;
+        {
+            xid = ob.getString("xid");
+            model.setXid(xid);
+            Value val = new Value(xid);
+            b.setAttribute("xid", val);
+        }
+
+        {
+            String deviceName = ob.getString("deviceName");
+            model.setDeviceName(deviceName);
+            Value val = new Value(deviceName);
+            b.setAttribute("deviceName", val);
+        }
+
         Node child = b.build();
         pointSetter(xid, child);
         setActions(child);
-        GetHistory.initAction(child, new Db("", folder));
+        GetHistory.initAction(child, new Db(xid, api));
         return model;
     }
 
     //helper method setting point values
     private void pointSetter(String xid, Node node) {
-        Node original = conn.client.getNode();
+        Node original = conn.getClientNode();
         try {
-            conn.client.setNode(node);
-            ResponseEntityDataPointModel dp = conn.api.getDataPoint(xid);
-            String sc = dp.getStatusCode().toString();
-            String b = dp.getBody().toString();
-            String h = dp.getHeaders().toString();
-            //LOGGER.info("Point Setter Data Point Model procedure\nStatus code:\t{}\nBody:\t{}\nHeaders:\t{}\n", sc, b, h);
+            conn.setClientNode(node);
+            ResponseEntityDataPointModel dp = api.getDataPoint(xid);
             LOGGER.info("Data Point Model complete");
-            ResponseEntityRealTimeModel rt = conn.api.get(xid);
-            sc = rt.getStatusCode().toString();
-            b = rt.getBody().toString();
-            h = rt.getHeaders().toString();
-            //LOGGER.info("Point Setter Real Time Model procedure\nStatus code:\t{}\nBody:\t{}\nHeaders:\t{}\n", sc, b, h);
+            ResponseEntityRealTimeModel rt = api.get(xid);
             LOGGER.info("Real Time Model complete");
-            conn.client.setNode(original);
+            conn.setClientNode(original);
         } catch (ApiException e) {
             if (e.getCode() == 404) {
                 LOGGER.error("Data point doesn't have a value - {}", node.getName());
@@ -279,7 +287,7 @@ public class MangoBodyBuilder {
             } else {
                 LOGGER.info("pointSetter loading error\n{}", e);
             }
-            conn.client.setNode(original);
+            conn.setClientNode(original);
         }
     }
 
@@ -294,8 +302,9 @@ public class MangoBodyBuilder {
             n.setWritable(Writable.WRITE);
             n.getListener().setValueHandler(new SetPointHandler(n));
         }
-        if (!folder.nodesToUpdate.contains(n))
-            folder.nodesToUpdate.add(n);
+        final ArrayList<Node> nodesToUpdate = folder.getNodesToUpdate();
+        if (!nodesToUpdate.contains(n))
+            nodesToUpdate.add(n);
         return plvo;
     }
 
@@ -305,6 +314,7 @@ public class MangoBodyBuilder {
         public SetPointHandler(Node kid) {
             this.kid = kid;
         }
+        @Override
         public void handle(ValuePair event) {
             if (!event.isFromExternalSource()) return;
             sendValue(kid, event);
@@ -349,7 +359,7 @@ public class MangoBodyBuilder {
                 LOGGER.info("sendValue - unknown data type: {}", type);
         }
         try {
-            ResponseEntityPointValueTimeModel pvtm = conn.api.putPointValue(n.getAttribute("xid").getString(), dpm);
+            api.putPointValue(n.getAttribute("xid").getString(), dpm);
         } catch (ApiException e) {
             LOGGER.info("sendValue loading error\n{}", e);
         }
@@ -357,46 +367,7 @@ public class MangoBodyBuilder {
 
     //set actions to each data point
     private void setActions(Node node) {
-        Action deleteAct = deleteAction(node);
+        Action deleteAct = folder.deleteAction(node);
         node.createChild("delete").setAction(deleteAct).setSerializable(false).build();
-    }
-
-    //create action object for deleting the data point
-    private Action deleteAction(Node node) {
-        Action act = new Action(Permission.READ, new DeleteHandler(node));
-        return act;
-    }
-
-    //handler to delete the data point
-    private class DeleteHandler implements Handler<ActionResult> {
-        Node node;
-        public DeleteHandler(Node node) {
-            this.node = node;
-        }
-        public void handle(ActionResult event) {
-            String name = node.getName();
-            try {
-                conn.api.delete(node.getAttribute("xid").getString()); //produces an exception
-                folder.updateHandle.cancel(true);
-                folder.nodesToUpdate.remove(node);
-                folder.updateHandle = folder.scheduler.scheduleAtFixedRate(folder.update, conn.link.updateRate, conn.link.updateRate, TimeUnit.SECONDS);
-                Node parent = node.getParent();
-                parent.removeChild(node);
-                folder.getHierarchy();
-                LOGGER.info("Data point deleted - {}", name);
-            } catch (ApiException e) {
-                LOGGER.info("deleteAction error - {}\n{}", node.getAttribute("xid"), e);
-            } catch (RuntimeException e) {
-                //the api call above returns an invalid response error
-                //the point actually gets deleted, but the rest of the method is skipped because of the thrown exception
-                //the code below ensures that the rest of the method performs its duties
-                folder.updateHandle.cancel(true);
-                folder.nodesToUpdate.remove(node);
-                folder.updateHandle = folder.scheduler.scheduleAtFixedRate(folder.update, conn.link.updateRate, conn.link.updateRate, TimeUnit.SECONDS);
-                Node parent = node.getParent();
-                parent.removeChild(node);
-                LOGGER.info("Data point deleted - {}", name);
-            }
-        }
     }
 }
