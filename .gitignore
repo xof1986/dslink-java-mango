@@ -1,8 +1,10 @@
-*.swp
-.key
-.name
-.idea/
+# Gradle
+.gradle
+build
+
+# Project files
 *.iml
-nodes.json
-build/
-.gradle/
+.idea
+
+# Misc
+.DS_Store
