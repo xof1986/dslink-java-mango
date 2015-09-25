@@ -136,7 +136,13 @@ public class MangoBodyBuilder {
                         node.setValue(val);
                         break;
                     case "Multistate":
-                        LOGGER.info("bodyBuilder:RealTimeModel - unimplemented data type: MULTISTATE");
+                        LOGGER.info("bodyBuilder:RealTimeModel - beta data type: MULTISTATE");
+                        node.setValueType(ValueType.NUMBER);
+                        node.setAttribute("type", new Value(type));
+                        Number mul = jo.getNumber("value");
+                        model.setValue(mul);
+                        val = new Value(mul);
+                        node.setValue(val);
                         break;
                     case "Image":
                         LOGGER.info("bodyBuilder:RealTimeModel - unimplemented data type: IMAGE");
@@ -159,7 +165,7 @@ public class MangoBodyBuilder {
                 model.setStatus(status);
                 val = new Value(status);
                 node.setAttribute("status", val);
-                Integer time = jo.getInteger("time");
+                Integer time = jo.getInteger("timestamp");
                 model.setTime(time.longValue());
                 val = new Value(time);
                 node.setAttribute("time", val);
@@ -181,12 +187,13 @@ public class MangoBodyBuilder {
                 m.setPointLocator(plvo);
                 m.setDeviceName(jo.getString("deviceName"));
                 m.setUnit(jo.getString("unit"));
+                //Data type moved to point locator
                 DataPointModel.DataTypeEnum dataType = DataPointModel.DataTypeEnum
-                        .valueOf(jo.getString("dataType"));
+                        .valueOf(pl.getString("dataType"));
                 m.setDataType(dataType);
                 JsonObject l = jo.getObject("loggingProperties");
                 LoggingProperties lp = new LoggingProperties();
-                lp.setType(LoggingProperties.TypeEnum.valueOf(l.getString("type")));
+                lp.setType(LoggingProperties.TypeEnum.valueOf(l.getString("loggingType")));
                 m.setEnabled(jo.getBoolean("enabled"));
                 m.setName("name");
                 //ToDo
