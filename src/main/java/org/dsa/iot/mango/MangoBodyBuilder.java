@@ -10,19 +10,16 @@ import org.dsa.iot.dslink.node.actions.Action;
 import org.dsa.iot.dslink.node.value.Value;
 import org.dsa.iot.dslink.node.value.ValuePair;
 import org.dsa.iot.dslink.node.value.ValueType;
+import org.dsa.iot.dslink.util.json.JsonArray;
+import org.dsa.iot.dslink.util.json.JsonObject;
 import org.dsa.iot.historian.stats.GetHistory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vertx.java.core.Handler;
-import org.vertx.java.core.json.JsonArray;
-import org.vertx.java.core.json.JsonObject;
+import org.dsa.iot.dslink.util.handler.Handler;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Peter Weise on 9/4/15.
- */
 public class MangoBodyBuilder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MangoBodyBuilder.class);
@@ -53,25 +50,25 @@ public class MangoBodyBuilder {
                 try {
                     JsonObject jo = new JsonObject(body);
                     UserModel model = new UserModel();
-                    model.setUsername(jo.getString("username"));
-                    model.setEmail(jo.getString("email"));
+                    model.setUsername((String) jo.get("username"));
+                    model.setEmail((String) jo.get("email"));
                     //Todo
                     //complete the PermissionsModel and DataPointPermissionsModel once there is something to test
                     PermissionsModel pm = new PermissionsModel();
                     List<String> dsx = new ArrayList<>();
-                    JsonArray ja = jo.getArray("dataSourceXids");
+                    JsonArray ja = jo.get("dataSourceXids");
                     if (ja != null)
-                        dsx = ja.toList();
+                        dsx = (List) ja.getList();
                     pm.setDataSourceXids(dsx);
                     model.setPermissions(pm);
-                    model.setDisabled(jo.getBoolean("disabled"));
-                    model.setPassword(jo.getString("password"));
-                    model.setHomeUrl(jo.getString("homeUrl"));
+                    model.setDisabled((Boolean) jo.get("disabled"));
+                    model.setPassword((String) jo.get("password"));
+                    model.setHomeUrl((String) jo.get("homeUrl"));
                     model.setReceiveAlarmEmails(UserModel.ReceiveAlarmEmailsEnum
-                            .valueOf(jo.getString("receiveAlarmEmails")));
-                    model.setMuted(jo.getBoolean("muted"));
-                    model.setTimezone(jo.getString("timezone"));
-                    model.setSystemTimezone(jo.getString("systemTimezone"));
+                            .valueOf((String) jo.get("receiveAlarmEmails")));
+                    model.setMuted((Boolean) jo.get("muted"));
+                    model.setTimezone((String) jo.get("timezone"));
+                    model.setSystemTimezone((String) jo.get("systemTimezone"));
                     instance = model;
                 } catch (Exception e) {
                     LOGGER.info("UserModel loading error\n{}", e);
@@ -81,7 +78,7 @@ public class MangoBodyBuilder {
                 try{
                     JsonObject jo = new JsonObject(body);
                     PointHierarchyModel model = new PointHierarchyModel();
-                    String name = jo.getString("name");
+                    String name = jo.get("name");
                     String root = name.toLowerCase();
                     if (name.equals("")) {
                         name = "Unnamed";
@@ -94,14 +91,14 @@ public class MangoBodyBuilder {
                         child = node.createChild(name).setSerializable(false).build();
                     }
                     List<DataPointSummaryModel> points = new ArrayList<>();
-                    for (Object o : jo.getArray("points")) {
+                    for (Object o : (JsonArray) jo.get("points")) {
                         DataPointSummaryModel dpsm = pointBuilder(o.toString(), child);
                         points.add(dpsm);
                     }
                     if (points.size() > 0) model.setPoints(points);
-                    model.setId(jo.getInteger("id"));
+                    model.setId((Integer) jo.get("id"));
                     List<PointHierarchyModel> folders = new ArrayList<>();
-                    for (Object j : jo.getArray("subfolders")) {
+                    for (Object j : (JsonArray) jo.get("subfolders")) {
                         PointHierarchyModel f = bodyBuilder(ret, j.toString(), child);
                         folders.add(f);
                     }
@@ -114,15 +111,15 @@ public class MangoBodyBuilder {
             case "io.swagger.client.model.RealTimeModel":
                 JsonObject jo = new JsonObject(body);
                 RealTimeModel model = new RealTimeModel();
-                model.setName(jo.getString("name"));
-                String type = jo.getString("type");
+                model.setName((String) jo.get("name"));
+                String type = jo.get("type");
                 model.setType(type);
                 Value val;
                 switch (type) {
                     case "Numeric":
                         node.setValueType(ValueType.NUMBER);
                         node.setAttribute("type", new Value(type));
-                        Number num = jo.getNumber("value");
+                        Number num = jo.get("value");
                         model.setValue(num);
                         val = new Value(num);
                         node.setValue(val);
@@ -130,7 +127,7 @@ public class MangoBodyBuilder {
                     case "Binary":
                         node.setValueType(ValueType.BOOL);
                         node.setAttribute("type", new Value(type));
-                        boolean b = jo.getBoolean("value");
+                        boolean b = jo.get("value");
                         model.setValue(b);
                         val = new Value(b);
                         node.setValue(val);
@@ -144,30 +141,30 @@ public class MangoBodyBuilder {
                     case "Alphanumeric":
                         node.setValueType(ValueType.STRING);
                         node.setAttribute("type", new Value(type));
-                        String s = jo.getString("value");
+                        String s = jo.get("value");
                         model.setValue(s);
                         val = new Value(s);
                         node.setValue(val);
                         break;
                 }
-                String path = jo.getString("path");
+                String path = jo.get("path");
                 model.setPath(path);
                 node.setAttribute("path", new Value(path));
-                model.setXid(jo.getString("xid"));
-                model.setDeviceName(jo.getString("deviceName"));
-                String status = jo.getString("status");
+                model.setXid((String) jo.get("xid"));
+                model.setDeviceName((String) jo.get("deviceName"));
+                String status = jo.get("status");
                 model.setStatus(status);
                 val = new Value(status);
                 node.setAttribute("status", val);
-                Integer time = jo.getInteger("time");
+                Integer time = jo.get("time");
                 model.setTime(time.longValue());
                 val = new Value(time);
                 node.setAttribute("time", val);
-                String unit = jo.getString("unit");
+                String unit = jo.get("unit");
                 model.setUnit(unit);
                 val = new Value(unit);
                 node.setAttribute("unit", val);
-                String rendered = jo.getString("renderedValue");
+                String rendered = jo.get("renderedValue");
                 model.setRenderedValue(rendered);
                 val = new Value(rendered);
                 node.setAttribute("renderedValue", val);
@@ -176,32 +173,32 @@ public class MangoBodyBuilder {
             case "io.swagger.client.model.DataPointModel":
                 jo = new JsonObject(body);
                 DataPointModel m = new DataPointModel();
-                JsonObject pl = jo.getObject("pointLocator");
+                JsonObject pl = jo.get("pointLocator");
                 PointLocatorVO plvo = pointLocatorBuilder(pl, node);
                 m.setPointLocator(plvo);
-                m.setDeviceName(jo.getString("deviceName"));
-                m.setUnit(jo.getString("unit"));
+                m.setDeviceName((String) jo.get("deviceName"));
+                m.setUnit((String) jo.get("unit"));
                 DataPointModel.DataTypeEnum dataType = DataPointModel.DataTypeEnum
-                        .valueOf(jo.getString("dataType"));
+                        .valueOf((String) jo.get("dataType"));
                 m.setDataType(dataType);
-                JsonObject l = jo.getObject("loggingProperties");
+                JsonObject l = jo.get("loggingProperties");
                 LoggingProperties lp = new LoggingProperties();
-                lp.setType(LoggingProperties.TypeEnum.valueOf(l.getString("type")));
-                m.setEnabled(jo.getBoolean("enabled"));
+                lp.setType(LoggingProperties.TypeEnum.valueOf((String) l.get("type")));
+                m.setEnabled((Boolean) jo.get("enabled"));
                 m.setName("name");
                 //ToDo
                 //setValidationMessage
-                m.setXid(jo.getString("xid"));
+                m.setXid((String) jo.get("xid"));
                 instance = m;
                 break;
             case "io.swagger.client.model.PointValueTimeModel":
                 jo = new JsonObject(body);
                 PointValueTimeModel mo = new PointValueTimeModel();
-                mo.setValue(jo.getValue("value"));
-                mo.setTimestamp(jo.getLong("timestamp"));
-                mo.setAnnotation(jo.getString("annotation"));
+                mo.setValue(jo.get("value"));
+                mo.setTimestamp(((Number) jo.get("timestamp")).longValue());
+                mo.setAnnotation((String) jo.get("annotation"));
                 PointValueTimeModel.DataTypeEnum dt = PointValueTimeModel.DataTypeEnum
-                        .valueOf(jo.getString("dataType"));
+                        .valueOf((String) jo.get("dataType"));
                 mo.setDataType(dt);
                 instance = mo;
                 break;
@@ -226,9 +223,9 @@ public class MangoBodyBuilder {
     private DataPointSummaryModel pointBuilder(String point, Node node) {
         final JsonObject ob = new JsonObject(point);
         final DataPointSummaryModel model = new DataPointSummaryModel();
-        final String name = ob.getString("name");
+        final String name = ob.get("name");
 
-        NodeBuilder b = node.createChild(ob.getString("xid"));
+        NodeBuilder b = node.createChild((String) ob.get("xid"));
         {
             b.setSerializable(false);
             b.setDisplayName(name);
@@ -238,14 +235,14 @@ public class MangoBodyBuilder {
             model.setName(name);
         }
         {
-            String dsxid = ob.getString("dataSourceXid");
+            String dsxid = ob.get("dataSourceXid");
             model.setDataSourceXid(dsxid);
             Value val = new Value(dsxid);
             b.setAttribute("dataSourceXid", val);
         }
 
         {
-            Integer pfid = ob.getInteger("pointFolderId");
+            Integer pfid = ob.get("pointFolderId");
             model.setPointFolderId(pfid);
             Value val = new Value(pfid);
             b.setAttribute("pointFolderId", val);
@@ -253,14 +250,14 @@ public class MangoBodyBuilder {
 
         final String xid;
         {
-            xid = ob.getString("xid");
+            xid = ob.get("xid");
             model.setXid(xid);
             Value val = new Value(xid);
             b.setAttribute("xid", val);
         }
 
         {
-            String deviceName = ob.getString("deviceName");
+            String deviceName = ob.get("deviceName");
             model.setDeviceName(deviceName);
             Value val = new Value(deviceName);
             b.setAttribute("deviceName", val);
@@ -300,7 +297,7 @@ public class MangoBodyBuilder {
     //for use by the ManagerFolder.startPointUpdates method
     private PointLocatorVO pointLocatorBuilder (JsonObject jo, Node n) {
         PointLocatorVO plvo = new PointLocatorVO();
-        plvo.setSettable(jo.getBoolean("settable"));
+        plvo.setSettable((Boolean) jo.get("settable"));
         if (plvo.getSettable()) {
             n.setWritable(Writable.WRITE);
             n.getListener().setValueHandler(new SetPointHandler(n));
