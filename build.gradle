@@ -20,7 +20,7 @@ dependencies {
     compile 'com.sun.jersey:jersey-client:1.19'
     compile 'com.sun.jersey.contribs:jersey-multipart:1.19'
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-joda:2.6.1'
-    compile 'org.iot-dsa:historian:0.10.0'
+    compile 'org.iot-dsa:historian:0.10.1'
 }
 
 run {
