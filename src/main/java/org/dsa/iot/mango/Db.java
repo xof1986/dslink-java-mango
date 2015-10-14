@@ -6,19 +6,15 @@ import io.swagger.client.model.JsonArrayStream;
 import io.swagger.client.model.ResponseEntityJsonArrayStream;
 import org.dsa.iot.dslink.node.Node;
 import org.dsa.iot.dslink.node.value.Value;
+import org.dsa.iot.dslink.util.handler.CompleteHandler;
+import org.dsa.iot.dslink.util.json.JsonObject;
 import org.dsa.iot.historian.database.Database;
 import org.dsa.iot.historian.utils.QueryData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vertx.java.core.Handler;
-import org.vertx.java.core.json.JsonObject;
 
 import java.util.Date;
 import java.util.List;
-
-/**
- * Created by Peter Weise on 9/14/15.
- */
 
 //only one of the overridden methods below are used in this implementation: query()
 //the rest are not needed
@@ -40,7 +36,7 @@ public class Db extends Database {
 
     //access the data history based query parameters
     @Override
-    public void query(String path, long from, long to, Handler<QueryData> handler) {
+    public void query(String path, long from, long to, CompleteHandler<QueryData> handler) {
         try {
             Date f = new Date(from);
             Date t = new Date(to);
@@ -49,8 +45,8 @@ public class Db extends Database {
             JsonArrayStream jas = j.getBody();
             List<JsonObject> list = jas.getJsonArray();
             for (JsonObject jo : list) {
-                Value val = new Value(jo.getNumber("value"));
-                long ts = jo.getNumber("timestamp").longValue();
+                Value val = new Value((Number) jo.get("value"));
+                long ts = jo.get("timestamp");
                 QueryData qd = new QueryData(val, ts);
                 handler.handle(qd);
             }
@@ -58,7 +54,7 @@ public class Db extends Database {
             LOGGER.info("Data point history query failed\n{}", e);
         }
 
-        handler.handle(null);
+        handler.complete();
     }
 
     @Override

@@ -1,8 +1,7 @@
 package io.swagger.client.model;
 
-import io.swagger.annotations.*;
-import org.vertx.java.core.json.JsonArray;
-import org.vertx.java.core.json.JsonObject;
+import io.swagger.annotations.ApiModel;
+import org.dsa.iot.dslink.util.json.JsonObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,9 +32,9 @@ public class JsonArrayStream   {
     StringBuilder sb = new StringBuilder();
     for (int i = 0; i < jsonArray.size(); i++) {
         JsonObject jo = jsonArray.get(i);
-        sb.append("{\n  annotation: ").append(jo.getString("annotation")).append("\n");
-        sb.append("  value: ").append(jo.getNumber("value")).append("\n");
-        sb.append("  timestamp: ").append(jo.getNumber("timestamp")).append("\n");
+        sb.append("{\n  annotation: ").append(jo.get("annotation")).append("\n");
+        sb.append("  value: ").append(jo.get("value")).append("\n");
+        sb.append("  timestamp: ").append(jo.get("timestamp")).append("\n");
         sb.append("}\n");
     }
     return sb.toString();
