@@ -13,9 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.dsa.iot.dslink.util.handler.Handler;
 
-/**
- * Created by Peter Weise on 8/31/15.
- */
 public class MangoLink {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MangoLink.class);
@@ -43,10 +40,7 @@ public class MangoLink {
 
     //initialize the link session and add the connection action
     private void init() {
-        node.clearChildren();  //used for testing purposes
-
         restoreLastSession();
-
         Action act = setPathAction();
         node.createChild("Add Connection").setAction(act).setSerializable(false).build();
     }
