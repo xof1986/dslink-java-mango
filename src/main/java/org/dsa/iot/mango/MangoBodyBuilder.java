@@ -162,7 +162,7 @@ public class MangoBodyBuilder {
                 model.setStatus(status);
                 val = new Value(status);
                 node.setAttribute("status", val);
-                Integer time = jo.get("timestamp");
+                Number time = jo.get("timestamp");
                 model.setTime(time.longValue());
                 val = new Value(time);
                 node.setAttribute("time", val);
