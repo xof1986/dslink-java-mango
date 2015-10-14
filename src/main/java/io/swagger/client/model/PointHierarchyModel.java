@@ -1,13 +1,11 @@
 package io.swagger.client.model;
 
-import io.swagger.client.model.PointHierarchyModel;
-import java.util.*;
-import io.swagger.client.model.DataPointSummaryModel;
-
-
-
-import io.swagger.annotations.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -18,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class PointHierarchyModel   {
   
   private String name = null;
-  private Integer id = null;
+  private Number id = null;
   private List<DataPointSummaryModel> points = new ArrayList<DataPointSummaryModel>();
   private List<PointHierarchyModel> subfolders = new ArrayList<PointHierarchyModel>();
 
@@ -39,14 +37,14 @@ public class PointHierarchyModel   {
    **/
   @ApiModelProperty(value = "")
   @JsonProperty("id")
-  public Integer getId() {
+  public Number getId() {
     return id;
   }
-  public void setId(Integer id) {
+
+  public void setId(Number id) {
     this.id = id;
   }
 
-  
   /**
    **/
   @ApiModelProperty(value = "")
