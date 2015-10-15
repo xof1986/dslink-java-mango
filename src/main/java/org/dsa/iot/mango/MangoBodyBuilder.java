@@ -133,7 +133,6 @@ public class MangoBodyBuilder {
                         node.setValue(val);
                         break;
                     case "Multistate":
-                        LOGGER.info("bodyBuilder:RealTimeModel - beta data type: MULTISTATE");
                         node.setValueType(ValueType.NUMBER);
                         node.setAttribute("type", new Value(type));
                         Number mul = jo.get("value");

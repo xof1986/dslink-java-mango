@@ -45,7 +45,15 @@ public class Db extends Database {
             JsonArrayStream jas = j.getBody();
             List<JsonObject> list = jas.getJsonArray();
             for (JsonObject jo : list) {
-                Value val = new Value((Number) jo.get("value"));
+            	Object o  = jo.get("value");
+            	Value val = null;
+            	if(o instanceof Boolean){
+            		val = new Value((Boolean)o);
+            	}else if (o instanceof Number){
+            		val = new Value((Number)o);
+            	}else if (o instanceof String){
+            		val = new Value((String)o);
+            	}
                 long ts = jo.get("timestamp");
                 QueryData qd = new QueryData(val, ts);
                 handler.handle(qd);
