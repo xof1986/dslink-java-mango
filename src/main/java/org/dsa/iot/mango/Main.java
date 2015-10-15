@@ -35,23 +35,23 @@ public class Main extends DSLinkHandler {
         NodeManager manager = link.getNodeManager();
 
         Node superRoot = manager.getNode("/").getNode();
-
-        {
-            NodeBuilder b = superRoot.createChild("defs");
-            b.setSerializable(false);
-            b.setHidden(true);
-            Node node = b.build();
-
-            b = node.createChild("profile");
-            node = b.build();
-
-            b = node.createChild("getHistory");
-            Action act = new Action(Permission.READ, null);
-            GetHistory.initProfile(act);
-            b.setAction(act);
-            b.build();
-        }
-
+        initHistoryProfile(superRoot);
         MangoLink.start(superRoot);
+    }
+
+    protected void initHistoryProfile(Node superRoot) {
+        NodeBuilder b = superRoot.createChild("defs");
+        b.setSerializable(false);
+        b.setHidden(true);
+        Node node = b.build();
+
+        b = node.createChild("profile");
+        node = b.build();
+
+        b = node.createChild("getHistory_");
+        Action act = new Action(Permission.READ, null);
+        GetHistory.initProfile(act);
+        b.setAction(act);
+        b.build();
     }
 }

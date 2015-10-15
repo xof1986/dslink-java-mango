@@ -9,9 +9,9 @@ import org.dsa.iot.dslink.node.actions.EditorType;
 import org.dsa.iot.dslink.node.actions.Parameter;
 import org.dsa.iot.dslink.node.value.Value;
 import org.dsa.iot.dslink.node.value.ValueType;
+import org.dsa.iot.dslink.util.handler.Handler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.dsa.iot.dslink.util.handler.Handler;
 
 public class MangoLink {
 
@@ -53,7 +53,8 @@ public class MangoLink {
             if (child.getAttribute("url") != null) {
                 MangoConn conn = new MangoConn(this, child);
                 conn.start();
-            } else if (child.getAction() == null) {
+            } else if (!"defs".equals(child.getName())
+                        && child.getAction() == null) {
                 node.removeChild(child);
             }
         }
