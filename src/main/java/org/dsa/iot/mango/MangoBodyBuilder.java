@@ -96,7 +96,7 @@ public class MangoBodyBuilder {
                         points.add(dpsm);
                     }
                     if (points.size() > 0) model.setPoints(points);
-                    model.setId((Integer) jo.get("id"));
+                    model.setId((Number) jo.get("id"));
                     List<PointHierarchyModel> folders = new ArrayList<>();
                     for (Object j : (JsonArray) jo.get("subfolders")) {
                         PointHierarchyModel f = bodyBuilder(ret, j.toString(), child);
@@ -247,7 +247,7 @@ public class MangoBodyBuilder {
         }
 
         {
-            Integer pfid = ob.get("pointFolderId");
+            Number pfid = ob.get("pointFolderId");
             model.setPointFolderId(pfid);
             Value val = new Value(pfid);
             b.setAttribute("pointFolderId", val);

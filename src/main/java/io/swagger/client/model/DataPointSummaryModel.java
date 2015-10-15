@@ -16,7 +16,7 @@ public class DataPointSummaryModel   {
   
   private String name = null;
   private String dataSourceXid = null;
-  private Integer pointFolderId = null;
+  private Number pointFolderId = null;
   private String xid = null;
   private String deviceName = null;
 
@@ -49,10 +49,10 @@ public class DataPointSummaryModel   {
    **/
   @ApiModelProperty(value = "")
   @JsonProperty("pointFolderId")
-  public Integer getPointFolderId() {
+  public Number getPointFolderId() {
     return pointFolderId;
   }
-  public void setPointFolderId(Integer pointFolderId) {
+  public void setPointFolderId(Number pointFolderId) {
     this.pointFolderId = pointFolderId;
   }
 
