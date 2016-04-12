@@ -115,52 +115,64 @@ public class MangoBodyBuilder {
                 String type = jo.get("type");
                 model.setType(type);
                 Value val;
-                switch (type) {
-                    case "Numeric":
-                        node.setValueType(ValueType.NUMBER);
-                        node.setAttribute("type", new Value(type));
-                        Number num = jo.get("value");
-                        model.setValue(num);
-                        val = new Value(num);
-                        node.setValue(val);
-                        break;
-                    case "Binary":
-                        node.setValueType(ValueType.BOOL);
-                        node.setAttribute("type", new Value(type));
-                        boolean b = jo.get("value");
-                        model.setValue(b);
-                        val = new Value(b);
-                        node.setValue(val);
-                        break;
-                    case "Multistate":
-                        node.setValueType(ValueType.NUMBER);
-                        node.setAttribute("type", new Value(type));
-                        Number mul = jo.get("value");
-                        model.setValue(mul);
-                        val = new Value(mul);
-                        node.setValue(val);
-                        break;
-                    case "Image":
-                        LOGGER.info("bodyBuilder:RealTimeModel - unimplemented data type: IMAGE");
-                        break;
-                    case "Alphanumeric":
-                        node.setValueType(ValueType.STRING);
-                        node.setAttribute("type", new Value(type));
-                        String s = jo.get("value");
-                        model.setValue(s);
-                        val = new Value(s);
-                        node.setValue(val);
-                        break;
+                
+                //Check to see if the point is enabled
+                String status = jo.get("status");
+                model.setStatus(status);
+                val = new Value(status);
+                node.setAttribute("status", val);
+                
+                //There will not be a value if it is disabled
+                if(!status.equalsIgnoreCase("DISABLED")){
+	                switch (type) {
+	                    case "Numeric":
+	                        node.setValueType(ValueType.NUMBER);
+	                        node.setAttribute("type", new Value(type));
+	                        Number num = jo.get("value");
+	                        model.setValue(num);
+	                        val = new Value(num);
+	                        node.setValue(val);
+	                        break;
+	                    case "Binary":
+	                        node.setValueType(ValueType.BOOL);
+	                        node.setAttribute("type", new Value(type));
+	                        boolean b = jo.get("value");
+	                        model.setValue(b);
+	                        val = new Value(b);
+	                        node.setValue(val);
+	                        break;
+	                    case "Multistate":
+	                        node.setValueType(ValueType.NUMBER);
+	                        node.setAttribute("type", new Value(type));
+	                        Number mul = jo.get("value");
+	                        model.setValue(mul);
+	                        val = new Value(mul);
+	                        node.setValue(val);
+	                        break;
+	                    case "Image":
+	                    	node.setValueType(ValueType.STRING);
+	                        node.setAttribute("type", new Value(type));
+	                        String i = jo.get("value");
+	                        model.setValue(i);
+	                        val = new Value(i);
+	                        node.setValue(val);
+	                        break;
+	                    case "Alphanumeric":
+	                        node.setValueType(ValueType.STRING);
+	                        node.setAttribute("type", new Value(type));
+	                        String s = jo.get("value");
+	                        model.setValue(s);
+	                        val = new Value(s);
+	                        node.setValue(val);
+	                        break;
+	                }
                 }
                 String path = jo.get("path");
                 model.setPath(path);
                 node.setAttribute("path", new Value(path));
                 model.setXid((String) jo.get("xid"));
                 model.setDeviceName((String) jo.get("deviceName"));
-                String status = jo.get("status");
-                model.setStatus(status);
-                val = new Value(status);
-                node.setAttribute("status", val);
+                
                 Number time = jo.get("timestamp");
                 model.setTime(time.longValue());
                 val = new Value(time);

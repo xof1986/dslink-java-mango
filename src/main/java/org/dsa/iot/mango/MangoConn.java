@@ -1,9 +1,12 @@
 package org.dsa.iot.mango;
 
+import java.util.List;
+
 import io.swagger.client.ApiClient;
 import io.swagger.client.ApiException;
 import io.swagger.client.api.MangoDSLApi;
 import io.swagger.client.model.ResponseEntityUserModel;
+
 import org.dsa.iot.dslink.node.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,11 +76,24 @@ public class MangoConn {
     private void setLogin() {
         try {
             String password = String.valueOf(node.getPassword());
-            ResponseEntityUserModel user = api.loginPost(node.getAttribute("username").getString(), password);
+            ResponseEntityUserModel user = api.login(node.getAttribute("username").getString(), password, false);
             if (client.getCookie().equals("")) {
                 String cookie = user.getHeaders().getCookie().split(";")[0].replaceAll("\\[", "");
                 client.setCookie(cookie);
+                LOGGER.info("Setting Cookie: " + cookie);
+                
             }
+            
+            for(String cookie : client.getResponseHeaders().get("Set-Cookie")){
+            	LOGGER.info("Got cookie: " + cookie);
+            	if(cookie.contains("XSRF-TOKEN")){
+            		String xsrfCookie = cookie.split(";")[0].replaceAll("\\[", "");
+            		String token = xsrfCookie.split("=")[1];
+            		LOGGER.info("Setting XSRF Token: " + token);
+            		client.addDefaultHeader("X-XSRF-TOKEN", token);
+            	}
+            }
+            
             LOGGER.info("{} logged in", node.getAttribute("username"));
             MangoFolder mf = new MangoFolder(node, api, this);
             mf.init();

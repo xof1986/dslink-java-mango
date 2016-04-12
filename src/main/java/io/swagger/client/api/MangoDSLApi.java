@@ -49,7 +49,6 @@ public class MangoDSLApi {
     public void setApiClient(ApiClient apiClient) {
         this.apiClient = apiClient;
     }
-
   
     /**
      * Get all data points
@@ -544,52 +543,6 @@ public class MangoDSLApi {
         TypeRef returnType = new TypeRef<ResponseEntityUserModel>() { };
 
         return apiClient.invokeAPI(path, "PUT", queryParams, postBody, postBinaryBody, headerParams, formParams, accept, contentType, authNames, returnType);
-    }
-  
-    /**
-     * loginPost
-     * loginPost
-     * @param username username
-     * @param password password
-     * @return ResponseEntityUserModel
-     */
-    public ResponseEntityUserModel loginPost (String username, String password) throws ApiException {
-        Object postBody = null;
-        byte[] postBinaryBody = null;
-
-         // verify the required parameter 'username' is set
-         if (username == null) {
-              throw new ApiException(400, "Missing the required parameter 'username' when calling loginPost");
-         }
-
-         // verify the required parameter 'password' is set
-         if (password == null) {
-              throw new ApiException(400, "Missing the required parameter 'password' when calling loginPost");
-         }
-
-        // create path and map variables
-        String path = API_VERSION + "/login/{username}".replaceAll("\\{" + "username" + "\\}", apiClient.escapeString(username.toString()));
-
-        // query params
-        List<Pair> queryParams = new ArrayList<Pair>();
-        Map<String, String> headerParams = new HashMap<String, String>();
-        Map<String, Object> formParams = new HashMap<String, Object>();
-
-        queryParams.addAll(apiClient.parameterToPairs("", "password", password));
-
-        final String[] accepts = { "application/json" };
-
-        final String accept = apiClient.selectHeaderAccept(accepts);
-
-        final String[] contentTypes = { };
-
-        final String contentType = apiClient.selectHeaderContentType(contentTypes);
-
-        String[] authNames = new String[] { };
-
-        TypeRef returnType = new TypeRef<ResponseEntityUserModel>() { };
-
-        return apiClient.invokeAPI(path, "POST", queryParams, postBody, postBinaryBody, headerParams, formParams, accept, contentType, authNames, returnType);
     }
   
     /**
