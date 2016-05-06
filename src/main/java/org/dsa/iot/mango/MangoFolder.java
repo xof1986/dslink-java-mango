@@ -181,10 +181,11 @@ public class MangoFolder {
                                     val = new Value(bool);
                                     break;
                                 case "Multistate":
-                                    LOGGER.warn("bodyBuilder:RealTimeModel - unimplemented data type: MULTISTATE");
+                                	Integer myInt = Integer.parseInt(value);
+                                	val = new Value(myInt);
                                     break;
                                 case "Image":
-                                    LOGGER.warn("bodyBuilder:RealTimeModel - unimplemented data type: IMAGE");
+                                    LOGGER.warn("mangoFolder:RealTimeModel - unimplemented data type: IMAGE");
                                     break;
                                 case "Alphanumeric":
                                     String s = String.valueOf(value);

@@ -34,6 +34,8 @@ import java.util.HashMap;
 
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2015-08-31T13:09:15.165-07:00")
 public class MangoDSLApi {
+
+    private static final String API_VERSION = "/v1";
     private ApiClient apiClient;
 
     public MangoDSLApi(ApiClient apiClient) {
@@ -47,7 +49,6 @@ public class MangoDSLApi {
     public void setApiClient(ApiClient apiClient) {
         this.apiClient = apiClient;
     }
-
   
     /**
      * Get all data points
@@ -60,7 +61,7 @@ public class MangoDSLApi {
           byte[] postBinaryBody = null;
 
           // create path and map variables
-          String path = "/v1/dataPoints".replaceAll("\\{format\\}", "json");
+          String path = API_VERSION + "/data-points";
 
           // query params
           List<Pair> queryParams = new ArrayList<Pair>();
@@ -100,7 +101,7 @@ public class MangoDSLApi {
          }
 
         // create path and map variables
-        String path = "/v1/dataPoints/{xid}".replaceAll("\\{format\\}","json").replaceAll("\\{" + "xid" + "\\}", apiClient.escapeString(xid.toString()));
+        String path = API_VERSION + "/data-points/{xid}".replaceAll("\\{" + "xid" + "\\}", apiClient.escapeString(xid.toString()));
 
         // query params
         List<Pair> queryParams = new ArrayList<Pair>();
@@ -139,7 +140,7 @@ public class MangoDSLApi {
          }
 
         // create path and map variables
-        String path = "/v1/dataPoints/{xid}".replaceAll("\\{format\\}","json").replaceAll("\\{" + "xid" + "\\}", apiClient.escapeString(xid.toString()));
+        String path = API_VERSION + "/data-points/{xid}".replaceAll("\\{" + "xid" + "\\}", apiClient.escapeString(xid.toString()));
 
         // query params
         List<Pair> queryParams = new ArrayList<Pair>();
@@ -176,7 +177,7 @@ public class MangoDSLApi {
          }
 
         // create path and map variables
-        String path = "/v1/dataPoints/{xid}".replaceAll("\\{format\\}","json").replaceAll("\\{" + "xid" + "\\}", apiClient.escapeString(xid.toString()));
+        String path = API_VERSION + "/data-points/{xid}".replaceAll("\\{" + "xid" + "\\}", apiClient.escapeString(xid.toString()));
 
         // query params
         List<Pair> queryParams = new ArrayList<Pair>();
@@ -208,7 +209,7 @@ public class MangoDSLApi {
         byte[] postBinaryBody = null;
 
         // create path and map variables
-        String path = "/v1/dataSources".replaceAll("\\{format\\}", "json");
+        String path = API_VERSION + "/data-sources";
 
         // query params
         List<Pair> queryParams = new ArrayList<Pair>();
@@ -246,7 +247,7 @@ public class MangoDSLApi {
          }
 
         // create path and map variables
-        String path = "/v1/dataSources/{xid}".replaceAll("\\{format\\}","json").replaceAll("\\{" + "xid" + "\\}", apiClient.escapeString(xid.toString()));
+        String path = API_VERSION + "/data-sources/{xid}".replaceAll("\\{" + "xid" + "\\}", apiClient.escapeString(xid.toString()));
 
         // query params
         List<Pair> queryParams = new ArrayList<Pair>();
@@ -285,7 +286,7 @@ public class MangoDSLApi {
          }
 
         // create path and map variables
-        String path = "/v1/dataSources/{xid}".replaceAll("\\{format\\}","json").replaceAll("\\{" + "xid" + "\\}", apiClient.escapeString(xid.toString()));
+        String path = API_VERSION + "/data-sources/{xid}".replaceAll("\\{" + "xid" + "\\}", apiClient.escapeString(xid.toString()));
 
         // query params
         List<Pair> queryParams = new ArrayList<Pair>();
@@ -317,7 +318,7 @@ public class MangoDSLApi {
         byte[] postBinaryBody = null;
 
         // create path and map variables
-        String path = "/v1/hierarchy".replaceAll("\\{format\\}", "json");
+        String path = API_VERSION + "/hierarchy/full";
 
         // query params
         List<Pair> queryParams = new ArrayList<Pair>();
@@ -355,7 +356,7 @@ public class MangoDSLApi {
          }
 
         // create path and map variables
-        String path = "/v1/hierarchy/byId/{folderId}".replaceAll("\\{format\\}","json").replaceAll("\\{" + "folderId" + "\\}", apiClient.escapeString(folderId.toString()));
+        String path = API_VERSION + "/hierarchy/by-id/{folderId}".replaceAll("\\{" + "folderId" + "\\}", apiClient.escapeString(folderId.toString()));
 
         // query params
         List<Pair> queryParams = new ArrayList<Pair>();
@@ -393,7 +394,7 @@ public class MangoDSLApi {
          }
 
         // create path and map variables
-        String path = "/v1/hierarchy/byName/{folderName}".replaceAll("\\{format\\}","json").replaceAll("\\{" + "folderName" + "\\}", apiClient.escapeString(folderName.toString()));
+        String path = API_VERSION + "/hierarchy/by-name/{folderName}".replaceAll("\\{" + "folderName" + "\\}", apiClient.escapeString(folderName.toString()));
 
         // query params
         List<Pair> queryParams = new ArrayList<Pair>();
@@ -431,7 +432,7 @@ public class MangoDSLApi {
          }
 
         // create path and map variables
-        String path = "/v1/hierarchy/path/{xid}".replaceAll("\\{format\\}","json").replaceAll("\\{" + "xid" + "\\}", apiClient.escapeString(xid.toString()));
+        String path = API_VERSION + "/hierarchy/path/{xid}".replaceAll("\\{" + "xid" + "\\}", apiClient.escapeString(xid.toString()));
 
         // query params
         List<Pair> queryParams = new ArrayList<Pair>();
@@ -471,7 +472,7 @@ public class MangoDSLApi {
          }
 
         // create path and map variables
-        String path = "/v1/login/{username}".replaceAll("\\{format\\}","json").replaceAll("\\{" + "username" + "\\}", apiClient.escapeString(username.toString()));
+        String path = API_VERSION + "/login/{username}".replaceAll("\\{" + "username" + "\\}", apiClient.escapeString(username.toString()));
 
         // query params
         List<Pair> queryParams = new ArrayList<Pair>();
@@ -520,7 +521,7 @@ public class MangoDSLApi {
          }
 
         // create path and map variables
-        String path = "/v1/login/{username}".replaceAll("\\{format\\}","json").replaceAll("\\{" + "username" + "\\}", apiClient.escapeString(username.toString()));
+        String path = API_VERSION + "/login/{username}".replaceAll("\\{" + "username" + "\\}", apiClient.escapeString(username.toString()));
 
         // query params
         List<Pair> queryParams = new ArrayList<Pair>();
@@ -545,52 +546,6 @@ public class MangoDSLApi {
     }
   
     /**
-     * loginPost
-     * loginPost
-     * @param username username
-     * @param password password
-     * @return ResponseEntityUserModel
-     */
-    public ResponseEntityUserModel loginPost (String username, String password) throws ApiException {
-        Object postBody = null;
-        byte[] postBinaryBody = null;
-
-         // verify the required parameter 'username' is set
-         if (username == null) {
-              throw new ApiException(400, "Missing the required parameter 'username' when calling loginPost");
-         }
-
-         // verify the required parameter 'password' is set
-         if (password == null) {
-              throw new ApiException(400, "Missing the required parameter 'password' when calling loginPost");
-         }
-
-        // create path and map variables
-        String path = "/v1/login/{username}".replaceAll("\\{format\\}","json").replaceAll("\\{" + "username" + "\\}", apiClient.escapeString(username.toString()));
-
-        // query params
-        List<Pair> queryParams = new ArrayList<Pair>();
-        Map<String, String> headerParams = new HashMap<String, String>();
-        Map<String, Object> formParams = new HashMap<String, Object>();
-
-        queryParams.addAll(apiClient.parameterToPairs("", "password", password));
-
-        final String[] accepts = { "application/json" };
-
-        final String accept = apiClient.selectHeaderAccept(accepts);
-
-        final String[] contentTypes = { };
-
-        final String contentType = apiClient.selectHeaderContentType(contentTypes);
-
-        String[] authNames = new String[] { };
-
-        TypeRef returnType = new TypeRef<ResponseEntityUserModel>() { };
-
-        return apiClient.invokeAPI(path, "POST", queryParams, postBody, postBinaryBody, headerParams, formParams, accept, contentType, authNames, returnType);
-    }
-  
-    /**
      * logout
      * logout
      * @return ResponseEntityUserModel
@@ -600,7 +555,7 @@ public class MangoDSLApi {
         byte[] postBinaryBody = null;
 
         // create path and map variables
-        String path = "/v1/logout".replaceAll("\\{format\\}", "json");
+        String path = API_VERSION + "/logout";
 
         // query params
         List<Pair> queryParams = new ArrayList<Pair>();
@@ -638,7 +593,7 @@ public class MangoDSLApi {
          }
 
         // create path and map variables
-        String path = "/v1/logout/{username}".replaceAll("\\{format\\}","json").replaceAll("\\{" + "username" + "\\}", apiClient.escapeString(username.toString()));
+        String path = API_VERSION + "/logout/{username}".replaceAll("\\{" + "username" + "\\}", apiClient.escapeString(username.toString()));
 
         // query params
         List<Pair> queryParams = new ArrayList<Pair>();
@@ -676,7 +631,7 @@ public class MangoDSLApi {
          }
 
         // create path and map variables
-        String path = "/v1/logout/{username}".replaceAll("\\{format\\}","json").replaceAll("\\{" + "username" + "\\}", apiClient.escapeString(username.toString()));
+        String path = API_VERSION + "/logout/{username}".replaceAll("\\{" + "username" + "\\}", apiClient.escapeString(username.toString()));
 
         // query params
         List<Pair> queryParams = new ArrayList<Pair>();
@@ -719,7 +674,7 @@ public class MangoDSLApi {
         }
 
         // create path and map variables
-        String path = "/v1/pointValues/{xid}".replaceAll("\\{format\\}", "json").replaceAll("\\{" + "xid" + "\\}", apiClient.escapeString(xid.toString()));
+        String path = API_VERSION + "/point-values/{xid}".replaceAll("\\{" + "xid" + "\\}", apiClient.escapeString(xid.toString()));
 
         // query params
         List<Pair> queryParams = new ArrayList<Pair>();
@@ -764,7 +719,7 @@ public class MangoDSLApi {
          }
 
         // create path and map variables
-        String path = "/v1/pointValues/{xid}".replaceAll("\\{format\\}","json").replaceAll("\\{" + "xid" + "\\}", apiClient.escapeString(xid.toString()));
+        String path = API_VERSION + "/point-values/{xid}".replaceAll("\\{" + "xid" + "\\}", apiClient.escapeString(xid.toString()));
 
         // query params
         List<Pair> queryParams = new ArrayList<Pair>();
@@ -804,7 +759,7 @@ public class MangoDSLApi {
          }
 
         // create path and map variables
-        String path = "/v1/pointValues/{xid}/firstLast".replaceAll("\\{format\\}","json").replaceAll("\\{" + "xid" + "\\}", apiClient.escapeString(xid.toString()));
+        String path = API_VERSION + "/point-values/{xid}/first-last".replaceAll("\\{" + "xid" + "\\}", apiClient.escapeString(xid.toString()));
 
         // query params
         List<Pair> queryParams = new ArrayList<Pair>();
@@ -851,7 +806,7 @@ public class MangoDSLApi {
          }
 
         // create path and map variables
-        String path = "/v1/pointValues/{xid}/latest".replaceAll("\\{format\\}","json").replaceAll("\\{" + "xid" + "\\}", apiClient.escapeString(xid.toString()));
+        String path = API_VERSION + "/point-values/{xid}/latest".replaceAll("\\{" + "xid" + "\\}", apiClient.escapeString(xid.toString()));
 
         // query params
         List<Pair> queryParams = new ArrayList<Pair>();
@@ -893,7 +848,7 @@ public class MangoDSLApi {
         }
 
         // create path and map variables
-        String path = "/v1/pointValues/{xid}/statistics".replaceAll("\\{format\\}","json").replaceAll("\\{" + "xid" + "\\}", apiClient.escapeString(xid.toString()));
+        String path = API_VERSION + "/point-values/{xid}/statistics".replaceAll("\\{" + "xid" + "\\}", apiClient.escapeString(xid.toString()));
 
         // query params
         List<Pair> queryParams = new ArrayList<Pair>();
@@ -929,7 +884,7 @@ public class MangoDSLApi {
         byte[] postBinaryBody = null;
 
         // create path and map variables
-        String path = "/v1/realtime".replaceAll("\\{format\\}","json");
+        String path = "/v1/realtime";
 
         // query params
         List<Pair> queryParams = new ArrayList<Pair>();
@@ -969,7 +924,7 @@ public class MangoDSLApi {
          }
 
         // create path and map variables
-        String path = "/v1/realtime/byXid/{xid}".replaceAll("\\{format\\}","json").replaceAll("\\{" + "xid" + "\\}", apiClient.escapeString(xid.toString()));
+        String path = API_VERSION + "/realtime/by-xid/{xid}".replaceAll("\\{" + "xid" + "\\}", apiClient.escapeString(xid.toString()));
 
         // query params
         List<Pair> queryParams = new ArrayList<Pair>();
@@ -1014,7 +969,7 @@ public class MangoDSLApi {
          }
 
         // create path and map variables
-        String path = "/v1/threads".replaceAll("\\{format\\}","json");
+        String path = API_VERSION + "/threads";
 
         // query params
         List<Pair> queryParams = new ArrayList<Pair>();
@@ -1050,7 +1005,7 @@ public class MangoDSLApi {
         byte[] postBinaryBody = null;
 
         // create path and map variables
-        String path = "/v1/users".replaceAll("\\{format\\}","json");
+        String path = API_VERSION + "/users";
 
         // query params
         List<Pair> queryParams = new ArrayList<Pair>();
@@ -1088,7 +1043,7 @@ public class MangoDSLApi {
          }
 
         // create path and map variables
-        String path = "/v1/users".replaceAll("\\{format\\}","json");
+        String path = API_VERSION + "/users";
 
         // query params
         List<Pair> queryParams = new ArrayList<Pair>();
@@ -1120,7 +1075,7 @@ public class MangoDSLApi {
         byte[] postBinaryBody = null;
 
         // create path and map variables
-        String path = "/v1/users/current".replaceAll("\\{format\\}","json");
+        String path = API_VERSION + "/users/current";
 
         // query params
         List<Pair> queryParams = new ArrayList<Pair>();
@@ -1158,7 +1113,7 @@ public class MangoDSLApi {
          }
 
         // create path and map variables
-        String path = "/v1/users/{username}".replaceAll("\\{format\\}","json").replaceAll("\\{" + "username" + "\\}", apiClient.escapeString(username.toString()));
+        String path = API_VERSION + "/users/{username}".replaceAll("\\{" + "username" + "\\}", apiClient.escapeString(username.toString()));
 
         // query params
         List<Pair> queryParams = new ArrayList<Pair>();
@@ -1197,7 +1152,7 @@ public class MangoDSLApi {
          }
 
         // create path and map variables
-        String path = "/v1/users/{username}".replaceAll("\\{format\\}","json").replaceAll("\\{" + "username" + "\\}", apiClient.escapeString(username.toString()));
+        String path = API_VERSION + "/users/{username}".replaceAll("\\{" + "username" + "\\}", apiClient.escapeString(username.toString()));
 
         // query params
         List<Pair> queryParams = new ArrayList<Pair>();
