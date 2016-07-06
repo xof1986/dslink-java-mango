@@ -3,6 +3,7 @@ package org.dsa.iot.mango;
 import io.swagger.client.ApiException;
 import io.swagger.client.api.MangoDSLApi;
 import io.swagger.client.model.*;
+
 import org.dsa.iot.dslink.node.Node;
 import org.dsa.iot.dslink.node.Permission;
 import org.dsa.iot.dslink.node.actions.Action;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.dsa.iot.dslink.util.handler.Handler;
 
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.concurrent.*;
 
 /**
@@ -29,7 +31,7 @@ public class MangoFolder {
     private MangoConn conn;
     private MangoDSLApi api;
     private boolean loggedIn = false;
-    private final ArrayList<Node> nodesToUpdate = new ArrayList<>();
+    private final Set<Node> nodesToUpdate = ConcurrentHashMap.newKeySet();
     private ScheduledFuture<?> updateHandle = null;
     private Runnable update = null;
     ScheduledThreadPoolExecutor stpe = Objects.getDaemonThreadPool();
@@ -40,7 +42,7 @@ public class MangoFolder {
         this.api = api;
     }
 
-    public ArrayList<Node> getNodesToUpdate() {
+    public Set<Node> getNodesToUpdate() {
         return nodesToUpdate;
     }
 
