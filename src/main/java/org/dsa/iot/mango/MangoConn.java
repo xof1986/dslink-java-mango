@@ -109,11 +109,11 @@ public class MangoConn {
             LOGGER.error("setLogin\n\tcode: {}\n\tmessage: {}\n\theader: {}\n\tbody: {}\n{}",
                     e.getCode(), e.getMessage(), e.getResponseHeaders(), e.getResponseBody(), e);
             Node parent = node.getParent();
-            parent.removeChild(node);
+            parent.removeChild(node, false);
         } catch (Exception e) {
             LOGGER.error("{}", e);
             Node parent = node.getParent();
-            parent.removeChild(node);
+            parent.removeChild(node, false);
         }
     }
 
@@ -128,7 +128,7 @@ public class MangoConn {
                     e.getCode(), e.getMessage(), e.getResponseHeaders(), e.getResponseBody(), e);
         }
         Node parent = node.getParent();
-        parent.removeChild(node);
+        parent.removeChild(node, false);
     }
 
 }

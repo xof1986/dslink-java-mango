@@ -90,7 +90,7 @@ public class MangoBodyBuilder {
                     if (root.equals("root")) {
                         child = node;
                     } else {
-                        child = node.createChild(name).setSerializable(false).build();
+                        child = node.createChild(name, false).setSerializable(false).build();
                     }
                     List<DataPointSummaryModel> points = new ArrayList<>();
                     for (Object o : (JsonArray) jo.get("points")) {
@@ -244,7 +244,7 @@ public class MangoBodyBuilder {
         final DataPointSummaryModel model = new DataPointSummaryModel();
         final String name = ob.get("name");
 
-        NodeBuilder b = node.createChild((String) ob.get("xid"));
+        NodeBuilder b = node.createChild((String) ob.get("xid"), false);
         {
             b.setSerializable(false);
             b.setDisplayName(name);
@@ -397,6 +397,6 @@ public class MangoBodyBuilder {
     //set actions to each data point
     private void setActions(Node node) {
         Action deleteAct = folder.deleteAction(node);
-        node.createChild("delete").setAction(deleteAct).setSerializable(false).build();
+        node.createChild("delete", false).setAction(deleteAct).setSerializable(false).build();
     }
 }
