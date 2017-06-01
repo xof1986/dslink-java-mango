@@ -1,12 +1,9 @@
 package org.dsa.iot.mango;
 
-import java.util.List;
-
 import io.swagger.client.ApiClient;
 import io.swagger.client.ApiException;
 import io.swagger.client.api.MangoDSLApi;
 import io.swagger.client.model.ResponseEntityUserModel;
-
 import org.dsa.iot.dslink.node.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,6 +73,7 @@ public class MangoConn {
     private void setLogin() {
         try {
             String password = String.valueOf(node.getPassword());
+
             ResponseEntityUserModel user = api.login(node.getAttribute("username").getString(), password, false);
             if (client.getCookie().equals("")) {
                 String cookie = user.getHeaders().getCookie().split(";")[0].replaceAll("\\[", "");
@@ -83,15 +81,25 @@ public class MangoConn {
                 LOGGER.info("Setting Cookie: " + cookie);
                 
             }
-            
+
+            String xsrfToken = "";
             for(String cookie : client.getResponseHeaders().get("Set-Cookie")){
             	LOGGER.info("Got cookie: " + cookie);
             	if(cookie.contains("XSRF-TOKEN")){
             		String xsrfCookie = cookie.split(";")[0].replaceAll("\\[", "");
             		String token = xsrfCookie.split("=")[1];
+            		xsrfToken = token;
             		LOGGER.info("Setting XSRF Token: " + token);
             		client.addDefaultHeader("X-XSRF-TOKEN", token);
             	}
+
+            	if(cookie.contains("MANGO")) {
+                    String xsrfCookie = cookie.split(";")[0].replaceAll("\\[", "");
+
+                    String key = xsrfCookie.split("=")[0];
+                    String value = xsrfCookie.split("=")[1];
+                    client.setCookie(key + "=" + value + ";" + "XSRF-TOKEN=" + xsrfToken);
+                }
             }
             
             LOGGER.info("{} logged in", node.getAttribute("username"));
@@ -101,11 +109,11 @@ public class MangoConn {
             LOGGER.error("setLogin\n\tcode: {}\n\tmessage: {}\n\theader: {}\n\tbody: {}\n{}",
                     e.getCode(), e.getMessage(), e.getResponseHeaders(), e.getResponseBody(), e);
             Node parent = node.getParent();
-            parent.removeChild(node);
+            parent.removeChild(node, false);
         } catch (Exception e) {
             LOGGER.error("{}", e);
             Node parent = node.getParent();
-            parent.removeChild(node);
+            parent.removeChild(node, false);
         }
     }
 
@@ -120,7 +128,7 @@ public class MangoConn {
                     e.getCode(), e.getMessage(), e.getResponseHeaders(), e.getResponseBody(), e);
         }
         Node parent = node.getParent();
-        parent.removeChild(node);
+        parent.removeChild(node, false);
     }
 
 }

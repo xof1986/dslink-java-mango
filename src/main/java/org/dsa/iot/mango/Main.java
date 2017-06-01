@@ -40,15 +40,15 @@ public class Main extends DSLinkHandler {
     }
 
     protected void initHistoryProfile(Node superRoot) {
-        NodeBuilder b = superRoot.createChild("defs");
+        NodeBuilder b = superRoot.createChild("defs", false);
         b.setSerializable(false);
         b.setHidden(true);
         Node node = b.build();
 
-        b = node.createChild("profile");
+        b = node.createChild("profile", false);
         node = b.build();
 
-        b = node.createChild("getHistory_");
+        b = node.createChild("getHistory_", false);
         Action act = new Action(Permission.READ, null);
         GetHistory.initProfile(act);
         b.setAction(act);
