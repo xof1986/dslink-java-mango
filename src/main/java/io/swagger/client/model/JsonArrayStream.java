@@ -32,9 +32,9 @@ public class JsonArrayStream   {
     StringBuilder sb = new StringBuilder();
     for (int i = 0; i < jsonArray.size(); i++) {
         JsonObject jo = jsonArray.get(i);
-        sb.append("{\n  annotation: ").append(jo.get("annotation")).append("\n");
-        sb.append("  value: ").append(jo.get("value")).append("\n");
-        sb.append("  timestamp: ").append(jo.get("timestamp")).append("\n");
+        sb.append("{\n  annotation: ").append((String)jo.get("annotation")).append("\n");
+        sb.append("  value: ").append((String)jo.get("value")).append("\n");
+        sb.append("  timestamp: ").append((Long)jo.get("timestamp")).append("\n");
         sb.append("}\n");
     }
     return sb.toString();

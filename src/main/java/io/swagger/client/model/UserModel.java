@@ -20,7 +20,7 @@ public class UserModel   {
   private Boolean muted = null;
 
   public enum ReceiveAlarmEmailsEnum {
-    NONE("NONE"), INFORMATION("INFORMATION"), URGENT("URGENT"), CRITICAL("CRITICAL"), LIFE_SAFETY("LIFE_SAFETY"), DO_NOT_LOG("DO_NOT_LOG");
+    NONE("NONE"), INFORMATION("INFORMATION"), URGENT("URGENT"), CRITICAL("CRITICAL"), LIFE_SAFETY("LIFE_SAFETY"), DO_NOT_LOG("DO_NOT_LOG"), IGNORE("IGNORE");
 
     private String value;
 

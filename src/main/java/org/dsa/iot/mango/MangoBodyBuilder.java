@@ -128,10 +128,16 @@ public class MangoBodyBuilder {
 	                    case "Numeric":
 	                        node.setValueType(ValueType.NUMBER);
 	                        node.setAttribute("type", new Value(type));
-	                        Number num = jo.get("value");
-	                        model.setValue(num);
-	                        val = new Value(num);
-	                        node.setValue(val);
+	                        Object o = jo.get("value");
+                            if(o instanceof Number) {
+                                Number num = jo.get("value");
+                                model.setValue(num);
+                                val = new Value(num);
+                                node.setValue(val);
+                            }else {
+                                LOGGER.warn("Numeric point with xid : " + jo.get("xid") + " has non numeric value of " + o);
+                            }
+
 	                        break;
 	                    case "Binary":
 	                        node.setValueType(ValueType.BOOL);
