@@ -142,34 +142,50 @@ public class MangoBodyBuilder {
 	                    case "Binary":
 	                        node.setValueType(ValueType.BOOL);
 	                        node.setAttribute("type", new Value(type));
-	                        boolean b = jo.get("value");
-	                        model.setValue(b);
-	                        val = new Value(b);
-	                        node.setValue(val);
+	                        Object b = jo.get("value");
+	                        if(b instanceof Boolean) {
+        	                        model.setValue(b);
+        	                        val = new Value((Boolean)b);
+        	                        node.setValue(val);
+	                        }else {
+	                            LOGGER.warn("Binary point with xid : " + jo.get("xid") + " has non binary value of " + b);
+	                        }
 	                        break;
 	                    case "Multistate":
 	                        node.setValueType(ValueType.NUMBER);
 	                        node.setAttribute("type", new Value(type));
-	                        Number mul = jo.get("value");
-	                        model.setValue(mul);
-	                        val = new Value(mul);
-	                        node.setValue(val);
+	                        Object mul = jo.get("value");
+	                        if(mul instanceof Number) {
+        	                        model.setValue(mul);
+        	                        val = new Value((Number)mul);
+        	                        node.setValue(val);
+	                        }else {
+	                           LOGGER.warn("Multistate point with xid : " + jo.get("xid") + " has non integer value of " + mul);
+	                        }
 	                        break;
 	                    case "Image":
 	                    	node.setValueType(ValueType.STRING);
 	                        node.setAttribute("type", new Value(type));
-	                        String i = jo.get("value");
-	                        model.setValue(i);
-	                        val = new Value(i);
-	                        node.setValue(val);
+	                        Object i = jo.get("value");
+	                        if(i instanceof String) {
+	                            model.setValue(i);
+	                            val = new Value((String)i);
+	                            node.setValue(val);
+	                        }else {
+	                               LOGGER.warn("Image point with xid : " + jo.get("xid") + " has non image value of " + i);
+	                            }
 	                        break;
 	                    case "Alphanumeric":
 	                        node.setValueType(ValueType.STRING);
 	                        node.setAttribute("type", new Value(type));
-	                        String s = jo.get("value");
-	                        model.setValue(s);
-	                        val = new Value(s);
-	                        node.setValue(val);
+	                        Object s = jo.get("value");
+	                        if(s instanceof String) {
+        	                        model.setValue(s);
+        	                        val = new Value((String)s);
+        	                        node.setValue(val);
+	                        }else {
+	                            LOGGER.warn("Alphanumeric point with xid : " + jo.get("xid") + " has non String value of " + s);
+	                        }
 	                        break;
 	                }
                 }
