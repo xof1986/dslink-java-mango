@@ -11,6 +11,7 @@ import com.sun.jersey.multipart.file.FileDataBodyPart;
 
 import javax.ws.rs.core.Response.Status.Family;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.NewCookie;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -34,9 +35,14 @@ import org.dsa.iot.dslink.node.Node;
 import org.dsa.iot.mango.MangoBodyBuilder;
 import org.dsa.iot.mango.MangoConn;
 import org.dsa.iot.mango.MangoFolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2015-08-31T13:09:15.165-07:00")
 public class ApiClient {
+    
+  private static final Logger LOGGER = LoggerFactory.getLogger(ApiClient.class);
+    
   private Map<String, Client> hostMap = new HashMap<String, Client>();
   private Map<String, String> defaultHeaderMap = new HashMap<String, String>();
   private boolean debugging = false;
@@ -486,10 +492,11 @@ public class ApiClient {
     String querystring = b.substring(0, b.length() - 1);
 
     Builder builder;
+    String location = basePath + path + querystring;
     if (accept == null)
-      builder = client.resource(basePath + path + querystring).getRequestBuilder();
+      builder = client.resource(location).getRequestBuilder();
     else
-      builder = client.resource(basePath + path + querystring).accept(accept);
+      builder = client.resource(location).accept(accept);
 
     for (String key : headerParams.keySet()) {
       builder = builder.header(key, headerParams.get(key));
@@ -500,6 +507,9 @@ public class ApiClient {
       }
     }
 
+    if(LOGGER.isDebugEnabled()) {
+        LOGGER.debug(method + " " + location);
+    }
     String encodedFormParams = null;
     if (contentType.startsWith("multipart/form-data")) {
       FormDataMultiPart mp = new FormDataMultiPart();
@@ -556,7 +566,9 @@ public class ApiClient {
       } else {
         response = builder.type(contentType).delete(ClientResponse.class, serialize(body, contentType));
       }
-    } else {
+    } else if("OPTIONS".equals(method)){
+        response = (ClientResponse) builder.options(ClientResponse.class);
+    }else {
       throw new ApiException(500, "unknown method type " + method);
     }
     return response;
@@ -579,13 +591,13 @@ public class ApiClient {
    */
    public <T> T invokeAPI(String path, String method, List<Pair> queryParams, Object body, byte[] binaryBody, Map<String, String> headerParams, Map<String, Object> formParams, String accept, String contentType, String[] authNames, TypeRef returnType) throws ApiException {
 
-       headerParams.put("Cookie", cookie);
-
        ClientResponse response = getAPIResponse(path, method, queryParams, body, binaryBody, headerParams, formParams, accept, contentType, authNames);
 
        statusCode = response.getStatusInfo().getStatusCode();
        responseHeaders = response.getHeaders();
-
+       for(NewCookie cookie : response.getCookies())
+           LOGGER.info("New cookie: " + cookie.getName() + "-->" + cookie.getValue());
+       
        if(response.getStatusInfo() == ClientResponse.Status.NO_CONTENT) {
            return null;
        } else if (response.getStatusInfo().getFamily() == Family.SUCCESSFUL) {
@@ -669,6 +681,7 @@ public class ApiClient {
    */
   private void updateParamsForAuth(String[] authNames, List<Pair> queryParams, Map<String, String> headerParams) {
     for (String authName : authNames) {
+        LOGGER.info("Using " + authName);
       Authentication auth = authentications.get(authName);
       if (auth == null) throw new RuntimeException("Authentication undefined: " + authName);
       auth.applyToParams(queryParams, headerParams);

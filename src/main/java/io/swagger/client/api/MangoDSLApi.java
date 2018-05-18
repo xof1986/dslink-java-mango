@@ -8,16 +8,38 @@ import io.swagger.client.TypeRef;
 
 import java.util.*;
 
-import io.swagger.client.model.*;
-
+import io.swagger.client.model.ResponseEntityListDataPointModel;
+import io.swagger.client.model.ResponseEntityDataPointModel;
+import io.swagger.client.model.DataPointModel;
+import io.swagger.client.model.ListAbstractDataSourceModelobject;
+import io.swagger.client.model.ResponseEntityAbstractDataSourceModelobject;
+import io.swagger.client.model.AbstractDataSourceModelobject;
+import io.swagger.client.model.ResponseEntityPointHierarchyModel;
+import io.swagger.client.model.ResponseEntityListstring;
+import io.swagger.client.model.ResponseEntityUserModel;
+import io.swagger.client.model.ResponseEntityJsonArrayStream;
 import java.util.Date;
+import io.swagger.client.model.PointValueTimeModel;
+import io.swagger.client.model.ResponseEntityPointValueTimeModel;
+import io.swagger.client.model.ResponseEntityListPointValueTimeModel;
+import io.swagger.client.model.ResponseEntityStatisticsStream;
+import io.swagger.client.model.ResponseEntityListRealTimeModel;
+import io.swagger.client.model.ResponseEntityRealTimeModel;
+import io.swagger.client.model.ResponseEntityListThreadModel;
+import io.swagger.client.model.ResponseEntityListUserModel;
+import io.swagger.client.model.UserModel;
 
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.HashMap;
 
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2015-08-31T13:09:15.165-07:00")
 public class MangoDSLApi {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MangoDSLApi.class);
     private static final String API_VERSION = "/v1";
     private ApiClient apiClient;
 
@@ -33,6 +55,10 @@ public class MangoDSLApi {
         this.apiClient = apiClient;
     }
   
+    private String[] getAuthNames() {
+        return new String[] {"basic"};
+        //return new String[] { };
+    }
     /**
      * Get all data points
      * Only returns points available to logged in user
@@ -61,7 +87,7 @@ public class MangoDSLApi {
 
           final String contentType = apiClient.selectHeaderContentType(contentTypes);
 
-          String[] authNames = new String[] { };
+          String[] authNames = getAuthNames();
 
           TypeRef returnType = new TypeRef<ResponseEntityListDataPointModel>() { };
 
@@ -99,7 +125,7 @@ public class MangoDSLApi {
 
         final String contentType = apiClient.selectHeaderContentType(contentTypes);
 
-        String[] authNames = new String[] { };
+        String[] authNames = getAuthNames();
 
         TypeRef returnType = new TypeRef<ResponseEntityDataPointModel>() { };
 
@@ -138,7 +164,7 @@ public class MangoDSLApi {
 
         final String contentType = apiClient.selectHeaderContentType(contentTypes);
 
-        String[] authNames = new String[] { };
+        String[] authNames = getAuthNames();
 
         TypeRef returnType = new TypeRef<ResponseEntityDataPointModel>() { };
         return apiClient.invokeAPI(path, "PUT", queryParams, postBody, postBinaryBody, headerParams, formParams, accept, contentType, authNames, returnType);
@@ -175,7 +201,7 @@ public class MangoDSLApi {
 
         final String contentType = apiClient.selectHeaderContentType(contentTypes);
 
-        String[] authNames = new String[] { };
+        String[] authNames = getAuthNames();
 
         TypeRef returnType = new TypeRef<ResponseEntityDataPointModel>() { };
 
@@ -207,7 +233,7 @@ public class MangoDSLApi {
 
         final String contentType = apiClient.selectHeaderContentType(contentTypes);
 
-        String[] authNames = new String[] { };
+        String[] authNames = getAuthNames();
 
         TypeRef returnType = new TypeRef<ListAbstractDataSourceModelobject>() { };
 
@@ -245,7 +271,7 @@ public class MangoDSLApi {
 
         final String contentType = apiClient.selectHeaderContentType(contentTypes);
 
-        String[] authNames = new String[] { };
+        String[] authNames = getAuthNames();
 
         TypeRef returnType = new TypeRef<ResponseEntityAbstractDataSourceModelobject>() { };
 
@@ -284,7 +310,7 @@ public class MangoDSLApi {
 
         final String contentType = apiClient.selectHeaderContentType(contentTypes);
 
-        String[] authNames = new String[] { };
+        String[] authNames = getAuthNames();
 
         TypeRef returnType = new TypeRef<ResponseEntityAbstractDataSourceModelobject>() { };
 
@@ -316,7 +342,7 @@ public class MangoDSLApi {
 
         final String contentType = apiClient.selectHeaderContentType(contentTypes);
 
-        String[] authNames = new String[] { };
+        String[] authNames = getAuthNames();
 
         TypeRef returnType = new TypeRef<ResponseEntityPointHierarchyModel>() { };
 
@@ -354,7 +380,7 @@ public class MangoDSLApi {
 
         final String contentType = apiClient.selectHeaderContentType(contentTypes);
 
-        String[] authNames = new String[] { };
+        String[] authNames = getAuthNames();
 
         TypeRef returnType = new TypeRef<ResponseEntityPointHierarchyModel>() { };
 
@@ -392,7 +418,7 @@ public class MangoDSLApi {
 
         final String contentType = apiClient.selectHeaderContentType(contentTypes);
 
-        String[] authNames = new String[] { };
+        String[] authNames = getAuthNames();
 
         TypeRef returnType = new TypeRef<ResponseEntityPointHierarchyModel>() { };
 
@@ -430,13 +456,13 @@ public class MangoDSLApi {
 
         final String contentType = apiClient.selectHeaderContentType(contentTypes);
 
-        String[] authNames = new String[] { };
+        String[] authNames = getAuthNames();
 
         TypeRef returnType = new TypeRef<ResponseEntityListstring>() { };
 
         return apiClient.invokeAPI(path, "GET", queryParams, postBody, postBinaryBody, headerParams, formParams, accept, contentType, authNames, returnType);
     }
-  
+    
     /**
      * login
      * login
@@ -446,7 +472,9 @@ public class MangoDSLApi {
      * @return ResponseEntityUserModel
      */
     public ResponseEntityUserModel login (String username, String password, Boolean logout) throws ApiException {
-        Object postBody = new LoginModel(username, password);
+        HashMap<String, Object> postBody = new HashMap<>();
+        postBody.put("username", username);
+        postBody.put("password", password);
         byte[] postBinaryBody = null;
 
          // verify the required parameter 'username' is set
@@ -456,14 +484,12 @@ public class MangoDSLApi {
 
         // create path and map variables
         String path = "/v2/login";
-
+        
         // query params
         List<Pair> queryParams = new ArrayList<Pair>();
         Map<String, String> headerParams = new HashMap<String, String>();
         Map<String, Object> formParams = new HashMap<String, Object>();
-
-        if (password != null)
-            headerParams.put("password", apiClient.parameterToString(password));
+        
         if (logout != null)
             headerParams.put("logout", apiClient.parameterToString(logout));
 
@@ -475,14 +501,32 @@ public class MangoDSLApi {
 
         final String contentType = apiClient.selectHeaderContentType(contentTypes);
 
-        String[] authNames = new String[] { };
+        String[] authNames = getAuthNames();
 
         TypeRef returnType = new TypeRef<ResponseEntityUserModel>() { };
 
-        String token = UUID.randomUUID().toString();
-        apiClient.setCookie("XSRF-TOKEN=" + token);
-        apiClient.addDefaultHeader("X-XSRF-TOKEN", token);
-
+        //First make an OPTIONS request to set the token
+        apiClient.invokeAPI(path, "OPTIONS", queryParams, postBody, postBinaryBody, headerParams, formParams, accept, contentType, authNames, null);
+        Iterator<String> it = apiClient.getResponseHeaders().keySet().iterator();
+        while(it.hasNext()) {
+            String key = it.next();
+            LOGGER.info(key + " --> " + apiClient.getResponseHeaders().get(key));
+        }
+        
+        for(String cookie : apiClient.getResponseHeaders().get("Set-Cookie")){
+            LOGGER.info("Got cookie: " + cookie);
+            if(cookie.contains("XSRF-TOKEN")){
+                String xsrfCookie = cookie.split(";")[0].replaceAll("\\[", "");
+                String token = xsrfCookie.split("=")[1];
+                LOGGER.info("Setting XSRF Token: " + token);
+                apiClient.addDefaultHeader("X-XSRF-TOKEN", token);
+                headerParams.put("X-XSRF-TOKEN", token);
+            }else {
+                //FAIL
+                LOGGER.error("Didn't get cookie!");
+            }
+        }
+        
         return apiClient.invokeAPI(path, "POST", queryParams, postBody, postBinaryBody, headerParams, formParams, accept, contentType, authNames, returnType);
     }
   
@@ -525,7 +569,7 @@ public class MangoDSLApi {
 
         final String contentType = apiClient.selectHeaderContentType(contentTypes);
 
-        String[] authNames = new String[] { };
+        String[] authNames = getAuthNames();
 
         TypeRef returnType = new TypeRef<ResponseEntityUserModel>() { };
 
@@ -557,7 +601,7 @@ public class MangoDSLApi {
 
         final String contentType = apiClient.selectHeaderContentType(contentTypes);
 
-        String[] authNames = new String[] { };
+        String[] authNames = getAuthNames();
 
         TypeRef returnType = new TypeRef<ResponseEntityUserModel>() { };
 
@@ -595,7 +639,7 @@ public class MangoDSLApi {
 
         final String contentType = apiClient.selectHeaderContentType(contentTypes);
 
-        String[] authNames = new String[] { };
+        String[] authNames = getAuthNames();
 
         TypeRef returnType = new TypeRef<ResponseEntityUserModel>() { };
 
@@ -633,7 +677,7 @@ public class MangoDSLApi {
 
         final String contentType = apiClient.selectHeaderContentType(contentTypes);
 
-        String[] authNames = new String[] { };
+        String[] authNames = getAuthNames();
 
         TypeRef returnType = new TypeRef<ResponseEntityUserModel>() { };
 
@@ -682,7 +726,7 @@ public class MangoDSLApi {
 
         final String contentType = apiClient.selectHeaderContentType(contentTypes);
 
-        String[] authNames = new String[]{ };
+        String[] authNames = getAuthNames();
 
         TypeRef returnType = new TypeRef<ResponseEntityJsonArrayStream[]>() { };
 
@@ -721,7 +765,7 @@ public class MangoDSLApi {
 
         final String contentType = apiClient.selectHeaderContentType(contentTypes);
 
-        String[] authNames = new String[] { };
+        String[] authNames = getAuthNames();
 
         TypeRef returnType = new TypeRef<ResponseEntityPointValueTimeModel>() { };
 
@@ -764,7 +808,7 @@ public class MangoDSLApi {
 
         final String contentType = apiClient.selectHeaderContentType(contentTypes);
 
-        String[] authNames = new String[] { };
+        String[] authNames = getAuthNames();
 
         TypeRef returnType = new TypeRef<ResponseEntityListPointValueTimeModel>() { };
 
@@ -810,7 +854,7 @@ public class MangoDSLApi {
 
         final String contentType = apiClient.selectHeaderContentType(contentTypes);
 
-        String[] authNames = new String[] { };
+        String[] authNames = getAuthNames();
 
         TypeRef returnType = new TypeRef<ResponseEntityListPointValueTimeModel>() { };
 
@@ -853,7 +897,7 @@ public class MangoDSLApi {
 
         final String contentType = apiClient.selectHeaderContentType(contentTypes);
 
-        String[] authNames = new String[] { };
+        String[] authNames = getAuthNames();
 
         TypeRef returnType = new TypeRef<ResponseEntityStatisticsStream>() { };
 
@@ -888,7 +932,7 @@ public class MangoDSLApi {
 
         final String contentType = apiClient.selectHeaderContentType(contentTypes);
 
-        String[] authNames = new String[] { };
+        String[] authNames = getAuthNames();
 
         TypeRef returnType = new TypeRef<ResponseEntityListRealTimeModel>() { };
 
@@ -926,7 +970,7 @@ public class MangoDSLApi {
 
         final String contentType = apiClient.selectHeaderContentType(contentTypes);
 
-        String[] authNames = new String[] { };
+        String[] authNames = getAuthNames();
 
         TypeRef returnType = new TypeRef<ResponseEntityRealTimeModel>() { };
 
@@ -975,7 +1019,7 @@ public class MangoDSLApi {
 
         final String contentType = apiClient.selectHeaderContentType(contentTypes);
 
-        String[] authNames = new String[] { };
+        String[] authNames = getAuthNames();
 
         TypeRef returnType = new TypeRef<ResponseEntityListThreadModel>() { };
 
@@ -1007,7 +1051,7 @@ public class MangoDSLApi {
 
         final String contentType = apiClient.selectHeaderContentType(contentTypes);
 
-        String[] authNames = new String[] { };
+        String[] authNames = getAuthNames();
 
         TypeRef returnType = new TypeRef<ResponseEntityListUserModel>() { };
 
@@ -1045,7 +1089,7 @@ public class MangoDSLApi {
 
         final String contentType = apiClient.selectHeaderContentType(contentTypes);
 
-        String[] authNames = new String[] { };
+        String[] authNames = getAuthNames();
 
         TypeRef returnType = new TypeRef<ResponseEntityUserModel>() { };
 
@@ -1077,7 +1121,7 @@ public class MangoDSLApi {
 
         final String contentType = apiClient.selectHeaderContentType(contentTypes);
 
-        String[] authNames = new String[] { };
+        String[] authNames = getAuthNames();
 
         TypeRef returnType = new TypeRef<ResponseEntityUserModel>() { };
 
@@ -1115,7 +1159,7 @@ public class MangoDSLApi {
 
         final String contentType = apiClient.selectHeaderContentType(contentTypes);
 
-        String[] authNames = new String[] { };
+        String[] authNames = getAuthNames();
 
         TypeRef returnType = new TypeRef<ResponseEntityUserModel>() { };
 
@@ -1154,7 +1198,7 @@ public class MangoDSLApi {
 
         final String contentType = apiClient.selectHeaderContentType(contentTypes);
 
-        String[] authNames = new String[] { };
+        String[] authNames = getAuthNames();
 
         TypeRef returnType = new TypeRef<ResponseEntityUserModel>() { };
 

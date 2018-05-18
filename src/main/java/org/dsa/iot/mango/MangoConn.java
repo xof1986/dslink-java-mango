@@ -69,26 +69,35 @@ public class MangoConn {
         setLogin();
     }
 
+
     //log into the server and establish a connection, saving the cookie for session access
     private void setLogin() {
         try {
+            //Only for Basic Auth
+            client.setUsername(node.getAttribute("username").getString());
+            client.setPassword(String.valueOf(node.getPassword()));
+
+            
             String password = String.valueOf(node.getPassword());
-            ResponseEntityUserModel user = api.login(node.getAttribute("username").getString(), password, false);
-            if (client.getCookie().equals("")) {
+            //TODO Setup for Token Auth ResponseEntityUserModel user = api.login(node.getAttribute("username").getString(), password, false);
+            
+            ResponseEntityUserModel user = api.getCurrentUser();
+            if (client.getCookie().equals("") && user.getHeaders().getCookie() != null) {
                 String cookie = user.getHeaders().getCookie().split(";")[0].replaceAll("\\[", "");
                 client.setCookie(cookie);
                 LOGGER.info("Setting Cookie: " + cookie);
                 
             }
-            
-            for(String cookie : client.getResponseHeaders().get("Set-Cookie")){
-            	LOGGER.info("Got cookie: " + cookie);
-            	if(cookie.contains("XSRF-TOKEN")){
-            		String xsrfCookie = cookie.split(";")[0].replaceAll("\\[", "");
-            		String token = xsrfCookie.split("=")[1];
-            		LOGGER.info("Setting XSRF Token: " + token);
-            		client.addDefaultHeader("X-XSRF-TOKEN", token);
-            	}
+            if(client.getResponseHeaders().get("Set-Cookie") != null) {
+                for(String cookie : client.getResponseHeaders().get("Set-Cookie")){
+                	LOGGER.info("Got cookie: " + cookie);
+                	if(cookie.contains("XSRF-TOKEN")){
+                		String xsrfCookie = cookie.split(";")[0].replaceAll("\\[", "");
+                		String token = xsrfCookie.split("=")[1];
+                		LOGGER.info("Setting XSRF Token: " + token);
+                		client.addDefaultHeader("X-XSRF-TOKEN", token);
+                	}
+                }
             }
             
             LOGGER.info("{} logged in", node.getAttribute("username"));
