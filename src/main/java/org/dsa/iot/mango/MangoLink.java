@@ -63,10 +63,10 @@ public class MangoLink {
     //set up action for setting the connection information
     private Action setPathAction() {
         Action act = new Action(Permission.READ, new CreateConnHandler());
-        act.addParameter(new Parameter("Name", ValueType.STRING).setPlaceHolder("Local Host"));
-        act.addParameter(new Parameter("URL", ValueType.STRING).setPlaceHolder("http://localhost:8000/rest"));
-        act.addParameter(new Parameter("Username", ValueType.STRING).setPlaceHolder("admin"));
-        act.addParameter(new Parameter("Password", ValueType.STRING).setPlaceHolder("admin")
+        act.addParameter(new Parameter("Name", ValueType.STRING).setDefaultValue(new Value("Local Host")));
+        act.addParameter(new Parameter("URL", ValueType.STRING).setDefaultValue(new Value("http://localhost:8081/rest")));
+        act.addParameter(new Parameter("Username", ValueType.STRING).setDefaultValue(new Value("admin")));
+        act.addParameter(new Parameter("Password", ValueType.STRING).setDefaultValue(new Value("admin"))
                 .setEditorType(EditorType.PASSWORD));
         act.addParameter(new Parameter("Default Polling Interval", ValueType.NUMBER, new Value(updateRate)));
         return act;

@@ -1,12 +1,19 @@
 package org.dsa.iot.mango;
 
+import java.util.UUID;
+
+import javax.ws.rs.core.Cookie;
+
+import org.dsa.iot.dslink.node.Node;
+import org.dsa.iot.dslink.node.value.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.swagger.client.ApiClient;
 import io.swagger.client.ApiException;
 import io.swagger.client.api.MangoDSLApi;
-import io.swagger.client.model.ResponseEntityUserModel;
-import org.dsa.iot.dslink.node.Node;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.swagger.client.api.MangoDSLApi.AuthenticationType;
+import io.swagger.client.auth.ApiKeyAuth;
 
 /**
  * Created by Peter Weise on 9/1/15.
@@ -20,6 +27,9 @@ public class MangoConn {
     private ApiClient client;
     private MangoDSLApi api;
 
+    //TODO For testing, this would be an input from the UI eventually
+    private String apiKey = "eyJhbGciOiJFUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU4OTgyMzA0OCwiaWQiOjEsInYiOjEsInR5cCI6ImF1dGgifQ.AFW0A_wXbgq98kBBQAF3EZuWnvT0ay0p_EReHtceAmRDkh3C-b-WREofwdOfGmzgOyqd4yGXLpK7xA-sfpdUJ6IIAKLuRB1U0EBX54QqepW4h_wlBYLeX3dFIfOMoLopNM4fNKBIH5X47HzXAGNKnheIYD3SGihwPLgzsoUBt-lal8au";
+    
     public MangoDSLApi getApi() {
         return api;
     }
@@ -52,6 +62,9 @@ public class MangoConn {
     public MangoConn(MangoLink link, Node child) {
         this.link = link;
         this.node = child;
+        
+        //TODO Setup UI to allow auth Type
+        this.node.setAttribute("authType", new Value(AuthenticationType.USER.name()));
     }
 
     //set up the API client and the Mango for Java DSL API framework
@@ -59,7 +72,7 @@ public class MangoConn {
         ApiClient apiClient = new ApiClient();
         String path = node.getAttribute("url").getString();
         client = apiClient.setBasePath(path);
-        api = new MangoDSLApi(client);
+        api = new MangoDSLApi(client, AuthenticationType.valueOf(node.getAttribute("authType").getString()));
         client.setBuilder(this);
     }
 
@@ -73,33 +86,30 @@ public class MangoConn {
     //log into the server and establish a connection, saving the cookie for session access
     private void setLogin() {
         try {
+            String token = UUID.randomUUID().toString();
+            client.addCookie(new Cookie("XSRF-TOKEN", token));
+            client.addDefaultHeader("X-XSRF-TOKEN", token);
+            
             //Only for Basic Auth
-            client.setUsername(node.getAttribute("username").getString());
-            client.setPassword(String.valueOf(node.getPassword()));
-
-            
-            String password = String.valueOf(node.getPassword());
-            //TODO Setup for Token Auth ResponseEntityUserModel user = api.login(node.getAttribute("username").getString(), password, false);
-            
-            ResponseEntityUserModel user = api.getCurrentUser();
-            if (client.getCookie().equals("") && user.getHeaders().getCookie() != null) {
-                String cookie = user.getHeaders().getCookie().split(";")[0].replaceAll("\\[", "");
-                client.setCookie(cookie);
-                LOGGER.info("Setting Cookie: " + cookie);
-                
+            switch(AuthenticationType.valueOf(node.getAttribute("authType").getString())) {
+                case BASIC:
+                default:
+                    client.setUsername(node.getAttribute("username").getString());
+                    client.setPassword(String.valueOf(node.getPassword()));
+                    //Ensure creds are ok
+                    api.getCurrentUser();
+                break;
+                case USER:
+                    String password = String.valueOf(node.getPassword());
+                    api.login(node.getAttribute("username").getString(), password, false);
+                    break;
+                case TOKEN:
+                    ApiKeyAuth auth = (ApiKeyAuth)client.getAuthentication("token");
+                    auth.setApiKeyPrefix("Bearer");
+                    auth.setApiKey(apiKey);
+                    api.getCurrentUser();
+                    break;
             }
-            if(client.getResponseHeaders().get("Set-Cookie") != null) {
-                for(String cookie : client.getResponseHeaders().get("Set-Cookie")){
-                	LOGGER.info("Got cookie: " + cookie);
-                	if(cookie.contains("XSRF-TOKEN")){
-                		String xsrfCookie = cookie.split(";")[0].replaceAll("\\[", "");
-                		String token = xsrfCookie.split("=")[1];
-                		LOGGER.info("Setting XSRF Token: " + token);
-                		client.addDefaultHeader("X-XSRF-TOKEN", token);
-                	}
-                }
-            }
-            
             LOGGER.info("{} logged in", node.getAttribute("username"));
             MangoFolder mf = new MangoFolder(node, api, this);
             mf.init();
@@ -107,11 +117,11 @@ public class MangoConn {
             LOGGER.error("setLogin\n\tcode: {}\n\tmessage: {}\n\theader: {}\n\tbody: {}\n{}",
                     e.getCode(), e.getMessage(), e.getResponseHeaders(), e.getResponseBody(), e);
             Node parent = node.getParent();
-            parent.removeChild(node, false);
+            parent.removeChild(node);
         } catch (Exception e) {
             LOGGER.error("{}", e);
             Node parent = node.getParent();
-            parent.removeChild(node, false);
+            parent.removeChild(node);
         }
     }
 
@@ -119,14 +129,14 @@ public class MangoConn {
     protected void logout() {
         try {
             api.logoutPost(node.getAttribute("username").getString());
-            client.setCookie("");
+            client.clearCookies();
             LOGGER.info("{} logged out", node.getAttribute("username"));
         } catch (ApiException e) {
             LOGGER.error("logout\n\tcode: {}\n\tmessage: {}\n\theader: {}\n\tbody: {}\n{}",
                     e.getCode(), e.getMessage(), e.getResponseHeaders(), e.getResponseBody(), e);
         }
         Node parent = node.getParent();
-        parent.removeChild(node, false);
+        parent.removeChild(node);
     }
 
 }

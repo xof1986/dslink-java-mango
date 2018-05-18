@@ -1,42 +1,47 @@
 package io.swagger.client;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.filter.LoggingFilter;
-import com.sun.jersey.api.client.WebResource.Builder;
-
-import com.sun.jersey.multipart.FormDataMultiPart;
-import com.sun.jersey.multipart.file.FileDataBodyPart;
-
-import javax.ws.rs.core.Response.Status.Family;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.NewCookie;
-
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.*;
-import java.util.Map.Entry;
-
 import java.net.URLEncoder;
-
-import java.io.IOException;
-import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.io.DataInputStream;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TimeZone;
 
-import io.swagger.client.auth.Authentication;
-import io.swagger.client.auth.HttpBasicAuth;
-import io.swagger.client.auth.ApiKeyAuth;
+import javax.ws.rs.core.Cookie;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.NewCookie;
+import javax.ws.rs.core.Response.Status.Family;
+
 import org.dsa.iot.dslink.node.Node;
 import org.dsa.iot.mango.MangoBodyBuilder;
 import org.dsa.iot.mango.MangoConn;
 import org.dsa.iot.mango.MangoFolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource.Builder;
+import com.sun.jersey.api.client.filter.LoggingFilter;
+import com.sun.jersey.multipart.FormDataMultiPart;
+import com.sun.jersey.multipart.file.FileDataBodyPart;
+
+import io.swagger.client.auth.ApiKeyAuth;
+import io.swagger.client.auth.Authentication;
+import io.swagger.client.auth.HttpBasicAuth;
 
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2015-08-31T13:09:15.165-07:00")
 public class ApiClient {
@@ -56,8 +61,8 @@ public class ApiClient {
 
   private DateFormat dateFormat;
 
-    private String cookie = "";
-    private Node node;
+  private List<Cookie> cookies = new ArrayList<>();
+  private Node node;
   protected MangoBodyBuilder builder;
 
   public ApiClient() {
@@ -73,7 +78,8 @@ public class ApiClient {
 
     // Setup authentications (key: authentication name, value: authentication).
     authentications = new HashMap<String, Authentication>();
-      authentications.put("basic", new HttpBasicAuth());
+    authentications.put("basic", new HttpBasicAuth());
+    authentications.put("token", new ApiKeyAuth("header", "Authorization"));
 
     // Prevent the authentications from being modified.
     authentications = Collections.unmodifiableMap(authentications);
@@ -88,12 +94,11 @@ public class ApiClient {
     return this;
   }
 
-    public void setCookie(String cookie) {
-        this.cookie = cookie;
+    public void addCookie(Cookie cookie) {
+        this.cookies.add(cookie);
     }
-
-    public String getCookie() {
-        return cookie;
+    public void clearCookies() {
+        this.cookies.clear();
     }
 
     public void setNode(Node node) {
@@ -506,7 +511,10 @@ public class ApiClient {
         builder = builder.header(key, defaultHeaderMap.get(key));
       }
     }
-
+    
+    for(Cookie cookie : cookies)
+        builder.cookie(cookie);
+    
     if(LOGGER.isDebugEnabled()) {
         LOGGER.debug(method + " " + location);
     }
@@ -595,8 +603,11 @@ public class ApiClient {
 
        statusCode = response.getStatusInfo().getStatusCode();
        responseHeaders = response.getHeaders();
-       for(NewCookie cookie : response.getCookies())
+       
+       for(NewCookie cookie : response.getCookies()) {
            LOGGER.info("New cookie: " + cookie.getName() + "-->" + cookie.getValue());
+           addCookie(cookie.toCookie());
+       }
        
        if(response.getStatusInfo() == ClientResponse.Status.NO_CONTENT) {
            return null;
@@ -636,9 +647,7 @@ public class ApiClient {
    */
  public byte[] invokeBinaryAPI(String path, String method, List<Pair> queryParams, Object body, byte[] binaryBody, Map<String, String> headerParams, Map<String, Object> formParams, String accept, String contentType, String[]authNames) throws ApiException {
 
-     headerParams.put("Cookie", cookie);
-
-    ClientResponse response = getAPIResponse(path, method, queryParams, body, binaryBody, headerParams, formParams, accept, contentType, authNames);
+     ClientResponse response = getAPIResponse(path, method, queryParams, body, binaryBody, headerParams, formParams, accept, contentType, authNames);
 
     if(response.getStatusInfo() == ClientResponse.Status.NO_CONTENT) {
       return null;

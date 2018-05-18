@@ -31,6 +31,8 @@ import io.swagger.client.model.UserModel;
 
 import java.util.Map;
 
+import javax.ws.rs.core.Cookie;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,12 +41,20 @@ import java.util.HashMap;
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2015-08-31T13:09:15.165-07:00")
 public class MangoDSLApi {
 
+    public enum AuthenticationType {
+        BASIC,
+        USER,
+        TOKEN
+    }
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(MangoDSLApi.class);
     private static final String API_VERSION = "/v1";
     private ApiClient apiClient;
+    private AuthenticationType authType;
 
-    public MangoDSLApi(ApiClient apiClient) {
+    public MangoDSLApi(ApiClient apiClient, AuthenticationType authType) {
         this.apiClient = apiClient;
+        this.authType = authType;
     }
 
     public ApiClient getApiClient() {
@@ -56,8 +66,16 @@ public class MangoDSLApi {
     }
   
     private String[] getAuthNames() {
-        return new String[] {"basic"};
-        //return new String[] { };
+        switch(authType) {
+            case BASIC:
+            return new String[] {"basic"};
+            case USER:
+                return new String[] { };
+            case TOKEN:
+                return new String[] {"token"};
+            default:
+                return new String[] {};
+        }
     }
     /**
      * Get all data points
@@ -505,28 +523,6 @@ public class MangoDSLApi {
 
         TypeRef returnType = new TypeRef<ResponseEntityUserModel>() { };
 
-        //First make an OPTIONS request to set the token
-        apiClient.invokeAPI(path, "OPTIONS", queryParams, postBody, postBinaryBody, headerParams, formParams, accept, contentType, authNames, null);
-        Iterator<String> it = apiClient.getResponseHeaders().keySet().iterator();
-        while(it.hasNext()) {
-            String key = it.next();
-            LOGGER.info(key + " --> " + apiClient.getResponseHeaders().get(key));
-        }
-        
-        for(String cookie : apiClient.getResponseHeaders().get("Set-Cookie")){
-            LOGGER.info("Got cookie: " + cookie);
-            if(cookie.contains("XSRF-TOKEN")){
-                String xsrfCookie = cookie.split(";")[0].replaceAll("\\[", "");
-                String token = xsrfCookie.split("=")[1];
-                LOGGER.info("Setting XSRF Token: " + token);
-                apiClient.addDefaultHeader("X-XSRF-TOKEN", token);
-                headerParams.put("X-XSRF-TOKEN", token);
-            }else {
-                //FAIL
-                LOGGER.error("Didn't get cookie!");
-            }
-        }
-        
         return apiClient.invokeAPI(path, "POST", queryParams, postBody, postBinaryBody, headerParams, formParams, accept, contentType, authNames, returnType);
     }
   
