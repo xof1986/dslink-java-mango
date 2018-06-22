@@ -136,6 +136,9 @@ public class MangoBodyBuilder {
                                 model.setValue(num);
                                 val = new Value(num);
                                 node.setValue(val);
+                            }else if(o == null){
+                                if(LOGGER.isDebugEnabled())
+                                    LOGGER.debug("Numeric point with xid : " + jo.get("xid") + " has no value.");
                             }else {
                                 LOGGER.warn("Numeric point with xid : " + jo.get("xid") + " has non numeric value of " + o);
                             }
@@ -149,6 +152,9 @@ public class MangoBodyBuilder {
         	                        model.setValue(b);
         	                        val = new Value((Boolean)b);
         	                        node.setValue(val);
+	                        }else if (b == null){
+	                            if(LOGGER.isDebugEnabled())
+	                                LOGGER.debug("Binary point with xid : " + jo.get("xid") + " has no value");
 	                        }else {
 	                            LOGGER.warn("Binary point with xid : " + jo.get("xid") + " has non binary value of " + b);
 	                        }
@@ -161,6 +167,9 @@ public class MangoBodyBuilder {
         	                        model.setValue(mul);
         	                        val = new Value((Number)mul);
         	                        node.setValue(val);
+	                        }else if(mul == null){
+	                            if(LOGGER.isDebugEnabled())
+	                                LOGGER.debug("Multistate point with xid : " + jo.get("xid") + " has no value");
 	                        }else {
 	                           LOGGER.warn("Multistate point with xid : " + jo.get("xid") + " has non integer value of " + mul);
 	                        }
@@ -173,6 +182,9 @@ public class MangoBodyBuilder {
 	                            model.setValue(i);
 	                            val = new Value((String)i);
 	                            node.setValue(val);
+	                        }else if(i == null){
+	                            if(LOGGER.isDebugEnabled())
+	                                LOGGER.debug("Image point with xid : " + jo.get("xid") + " has no value");
 	                        }else {
 	                               LOGGER.warn("Image point with xid : " + jo.get("xid") + " has non image value of " + i);
 	                            }
@@ -181,10 +193,13 @@ public class MangoBodyBuilder {
 	                        node.setValueType(ValueType.STRING);
 	                        node.setAttribute("type", new Value(type));
 	                        Object s = jo.get("value");
-	                        if(s instanceof String) {
+	                        if(s !=null && s instanceof String) {
         	                        model.setValue(s);
         	                        val = new Value((String)s);
         	                        node.setValue(val);
+	                        }else if(s == null){
+	                            if(LOGGER.isDebugEnabled())
+	                                LOGGER.debug("Alphanumeric point with xid : " + jo.get("xid") + " has no value");
 	                        }else {
 	                            LOGGER.warn("Alphanumeric point with xid : " + jo.get("xid") + " has non String value of " + s);
 	                        }
