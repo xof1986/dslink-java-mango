@@ -88,7 +88,7 @@ public class MangoConn {
         try {
             String token = UUID.randomUUID().toString();
             client.addCookie(new Cookie("XSRF-TOKEN", token));
-            client.addDefaultHeader("X-XSRF-TOKEN", token);
+            client.setXsrfToken(token);
             
             //Only for Basic Auth
             switch(AuthenticationType.valueOf(node.getAttribute("authType").getString())) {

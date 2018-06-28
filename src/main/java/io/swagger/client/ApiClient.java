@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TimeZone;
@@ -62,6 +63,7 @@ public class ApiClient {
   private DateFormat dateFormat;
 
   private List<Cookie> cookies = new ArrayList<>();
+  private String xsrfToken;
   private Node node;
   protected MangoBodyBuilder builder;
 
@@ -93,7 +95,19 @@ public class ApiClient {
     this.basePath = basePath;
     return this;
   }
-
+    public void setXsrfToken(String token) {
+        this.xsrfToken = token;
+    }
+    public void addOrReplaceCookie(Cookie cookie) {
+        ListIterator<Cookie> it = this.cookies.listIterator();
+        while(it.hasNext()) {
+            Cookie c = it.next();
+            if(c.getName().equals(cookie.getName())) {
+                it.remove();
+            }
+        }
+        this.cookies.add(cookie);
+    }
     public void addCookie(Cookie cookie) {
         this.cookies.add(cookie);
     }
@@ -540,7 +554,9 @@ public class ApiClient {
     if ("GET".equals(method)) {
       response = (ClientResponse) builder.get(ClientResponse.class);
     } else if ("POST".equals(method)) {
-      if (encodedFormParams != null) {
+        //Add CSRF header "X-XSRF-TOKEN"
+        builder.header("X-XSRF-TOKEN", xsrfToken);
+      if (encodedFormParams != null) {  
         response = builder.type(contentType).post(ClientResponse.class, encodedFormParams);
       } else if (body == null) {
         if(binaryBody == null)
@@ -553,6 +569,8 @@ public class ApiClient {
         response = builder.type(contentType).post(ClientResponse.class, serialize(body, contentType));
       }
     } else if ("PUT".equals(method)) {
+        //Add CSRF header "X-XSRF-TOKEN"
+        builder.header("X-XSRF-TOKEN", xsrfToken);
       if (encodedFormParams != null) {
         response = builder.type(contentType).put(ClientResponse.class, encodedFormParams);
       } else if(body == null) {
@@ -605,8 +623,12 @@ public class ApiClient {
        responseHeaders = response.getHeaders();
        
        for(NewCookie cookie : response.getCookies()) {
-           LOGGER.info("New cookie: " + cookie.getName() + "-->" + cookie.getValue());
-           addCookie(cookie.toCookie());
+           LOGGER.info("New cookie: " + cookie.getName() + "-->" + cookie.getValue() + "{ " + cookie + "}");
+           if(cookie.getValue() == null ||  cookie.getValue().length() == 0)
+               continue;
+           if(cookie.getName().equals("XSRF-TOKEN"))
+               this.xsrfToken = cookie.getValue();
+           addOrReplaceCookie(cookie.toCookie());
        }
        
        if(response.getStatusInfo() == ClientResponse.Status.NO_CONTENT) {

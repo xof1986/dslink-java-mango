@@ -409,7 +409,11 @@ public class MangoBodyBuilder {
                 dpm.setValue(entryNum);
                 break;
             case "Multistate":
-                LOGGER.info("sendValue - unimplemented data type: MULTISTATE");
+                Number entryInteger = event.getCurrent().getNumber();
+                val = new Value(entryInteger.intValue());
+                n.setValue(val);
+                dpm.setDataType(PointValueTimeModel.DataTypeEnum.MULTISTATE);
+                dpm.setValue(entryInteger);
                 break;
             case "Image":
                 LOGGER.info("sendValue - unimplemented data type: IMAGE");
