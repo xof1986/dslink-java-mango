@@ -8,26 +8,9 @@ import io.swagger.client.TypeRef;
 
 import java.util.*;
 
-import io.swagger.client.model.ResponseEntityListDataPointModel;
-import io.swagger.client.model.ResponseEntityDataPointModel;
-import io.swagger.client.model.DataPointModel;
-import io.swagger.client.model.ListAbstractDataSourceModelobject;
-import io.swagger.client.model.ResponseEntityAbstractDataSourceModelobject;
-import io.swagger.client.model.AbstractDataSourceModelobject;
-import io.swagger.client.model.ResponseEntityPointHierarchyModel;
-import io.swagger.client.model.ResponseEntityListstring;
-import io.swagger.client.model.ResponseEntityUserModel;
-import io.swagger.client.model.ResponseEntityJsonArrayStream;
+import io.swagger.client.model.*;
+
 import java.util.Date;
-import io.swagger.client.model.PointValueTimeModel;
-import io.swagger.client.model.ResponseEntityPointValueTimeModel;
-import io.swagger.client.model.ResponseEntityListPointValueTimeModel;
-import io.swagger.client.model.ResponseEntityStatisticsStream;
-import io.swagger.client.model.ResponseEntityListRealTimeModel;
-import io.swagger.client.model.ResponseEntityRealTimeModel;
-import io.swagger.client.model.ResponseEntityListThreadModel;
-import io.swagger.client.model.ResponseEntityListUserModel;
-import io.swagger.client.model.UserModel;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -463,7 +446,7 @@ public class MangoDSLApi {
      * @return ResponseEntityUserModel
      */
     public ResponseEntityUserModel login (String username, String password, Boolean logout) throws ApiException {
-        Object postBody = null;
+        Object postBody = new LoginModel(username, password);
         byte[] postBinaryBody = null;
 
          // verify the required parameter 'username' is set
@@ -472,7 +455,7 @@ public class MangoDSLApi {
          }
 
         // create path and map variables
-        String path = API_VERSION + "/login/{username}".replaceAll("\\{" + "username" + "\\}", apiClient.escapeString(username.toString()));
+        String path = "/v2/login";
 
         // query params
         List<Pair> queryParams = new ArrayList<Pair>();
@@ -496,7 +479,11 @@ public class MangoDSLApi {
 
         TypeRef returnType = new TypeRef<ResponseEntityUserModel>() { };
 
-        return apiClient.invokeAPI(path, "GET", queryParams, postBody, postBinaryBody, headerParams, formParams, accept, contentType, authNames, returnType);
+        String token = UUID.randomUUID().toString();
+        apiClient.setCookie("XSRF-TOKEN=" + token);
+        apiClient.addDefaultHeader("X-XSRF-TOKEN", token);
+
+        return apiClient.invokeAPI(path, "POST", queryParams, postBody, postBinaryBody, headerParams, formParams, accept, contentType, authNames, returnType);
     }
   
     /**

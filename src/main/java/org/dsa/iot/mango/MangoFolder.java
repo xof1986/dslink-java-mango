@@ -3,6 +3,7 @@ package org.dsa.iot.mango;
 import io.swagger.client.ApiException;
 import io.swagger.client.api.MangoDSLApi;
 import io.swagger.client.model.*;
+
 import org.dsa.iot.dslink.node.Node;
 import org.dsa.iot.dslink.node.Permission;
 import org.dsa.iot.dslink.node.actions.Action;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.dsa.iot.dslink.util.handler.Handler;
 
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.concurrent.*;
 
 /**
@@ -29,7 +31,7 @@ public class MangoFolder {
     private MangoConn conn;
     private MangoDSLApi api;
     private boolean loggedIn = false;
-    private final ArrayList<Node> nodesToUpdate = new ArrayList<>();
+    private final Set<Node> nodesToUpdate = ConcurrentHashMap.newKeySet();
     private ScheduledFuture<?> updateHandle = null;
     private Runnable update = null;
     ScheduledThreadPoolExecutor stpe = Objects.getDaemonThreadPool();
@@ -40,7 +42,7 @@ public class MangoFolder {
         this.api = api;
     }
 
-    public ArrayList<Node> getNodesToUpdate() {
+    public Set<Node> getNodesToUpdate() {
         return nodesToUpdate;
     }
 
@@ -61,13 +63,13 @@ public class MangoFolder {
     //set actions for the server level node
     private void setActions() {
         Action editAct = editAction();
-        node.createChild("Edit").setAction(editAct).setSerializable(false).build();
+        node.createChild("Edit", false).setAction(editAct).setSerializable(false).build();
 
         Action outAct = logoutAction();
-        node.createChild("Delete").setAction(outAct).setSerializable(false).build();
+        node.createChild("Delete", false).setAction(outAct).setSerializable(false).build();
 
         Action refreshAct = refreshAction();
-        node.createChild("Refresh").setAction(refreshAct).setSerializable(false).build();
+        node.createChild("Refresh", false).setAction(refreshAct).setSerializable(false).build();
     }
 
     //create action object for editing node attributes
@@ -233,7 +235,7 @@ public class MangoFolder {
                 updateHandle = stpe.scheduleAtFixedRate(update, conn.getUpdateRate(), conn.getUpdateRate(),
                         TimeUnit.SECONDS);
                 Node parent = node.getParent();
-                parent.removeChild(node);
+                parent.removeChild(node, false);
                 getHierarchy();
                 LOGGER.info("Data point deleted - {}", name);
             } catch (ApiException e) {
@@ -247,7 +249,7 @@ public class MangoFolder {
                 updateHandle = stpe.scheduleAtFixedRate(update, conn.getUpdateRate(), conn.getUpdateRate(),
                         TimeUnit.SECONDS);
                 Node parent = node.getParent();
-                parent.removeChild(node);
+                parent.removeChild(node, false);
                 LOGGER.info("Data point deleted - {}", name);
             }
         }

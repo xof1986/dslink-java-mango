@@ -1,12 +1,9 @@
 package org.dsa.iot.mango;
 
-import java.util.List;
-
 import io.swagger.client.ApiClient;
 import io.swagger.client.ApiException;
 import io.swagger.client.api.MangoDSLApi;
 import io.swagger.client.model.ResponseEntityUserModel;
-
 import org.dsa.iot.dslink.node.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,11 +98,11 @@ public class MangoConn {
             LOGGER.error("setLogin\n\tcode: {}\n\tmessage: {}\n\theader: {}\n\tbody: {}\n{}",
                     e.getCode(), e.getMessage(), e.getResponseHeaders(), e.getResponseBody(), e);
             Node parent = node.getParent();
-            parent.removeChild(node);
+            parent.removeChild(node, false);
         } catch (Exception e) {
             LOGGER.error("{}", e);
             Node parent = node.getParent();
-            parent.removeChild(node);
+            parent.removeChild(node, false);
         }
     }
 
@@ -120,7 +117,7 @@ public class MangoConn {
                     e.getCode(), e.getMessage(), e.getResponseHeaders(), e.getResponseBody(), e);
         }
         Node parent = node.getParent();
-        parent.removeChild(node);
+        parent.removeChild(node, false);
     }
 
 }

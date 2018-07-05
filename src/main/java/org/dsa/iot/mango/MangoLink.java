@@ -42,7 +42,7 @@ public class MangoLink {
     private void init() {
         restoreLastSession();
         Action act = setPathAction();
-        node.createChild("Add Connection").setAction(act).setSerializable(false).build();
+        node.createChild("Add Connection", false).setAction(act).setSerializable(false).build();
     }
 
     //reload the nodes and objects used during the last application execution
@@ -55,7 +55,7 @@ public class MangoLink {
                 conn.start();
             } else if (!"defs".equals(child.getName())
                         && child.getAction() == null) {
-                node.removeChild(child);
+                node.removeChild(child, false);
             }
         }
     }
@@ -82,7 +82,7 @@ public class MangoLink {
             String username = event.getParameter("Username", ValueType.STRING).getString();
             String pw = event.getParameter("Password", ValueType.STRING).getString();
             updateRate = event.getParameter("Default Polling Interval", ValueType.NUMBER).getNumber().intValue();
-            NodeBuilder b = node.createChild(name);
+            NodeBuilder b = node.createChild(name, false);
             b.setAttribute("url", new Value(url));
             b.setAttribute("username", new Value(username));
             b.setPassword(pw.toCharArray());

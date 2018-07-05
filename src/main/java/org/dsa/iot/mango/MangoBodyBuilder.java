@@ -3,6 +3,7 @@ package org.dsa.iot.mango;
 import io.swagger.client.ApiException;
 import io.swagger.client.api.MangoDSLApi;
 import io.swagger.client.model.*;
+
 import org.dsa.iot.dslink.node.Node;
 import org.dsa.iot.dslink.node.NodeBuilder;
 import org.dsa.iot.dslink.node.Writable;
@@ -19,6 +20,7 @@ import org.dsa.iot.dslink.util.handler.Handler;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class MangoBodyBuilder {
 
@@ -88,7 +90,7 @@ public class MangoBodyBuilder {
                     if (root.equals("root")) {
                         child = node;
                     } else {
-                        child = node.createChild(name).setSerializable(false).build();
+                        child = node.createChild(name, false).setSerializable(false).build();
                     }
                     List<DataPointSummaryModel> points = new ArrayList<>();
                     for (Object o : (JsonArray) jo.get("points")) {
@@ -243,11 +245,11 @@ public class MangoBodyBuilder {
                 break;
             case "io.swagger.client.model.JsonArrayStream":
                 JsonArray ja = new JsonArray(body);
-                JsonArrayStream jas = new JsonArrayStream();
-                for (int i  = 0; i < ja.size(); i++) {
-                    JsonObject job = ja.get(i);
-                    jas.putJsonArray(job);
-                }
+                JsonArrayStream jas = new JsonArrayStream(ja);
+//                for (int i  = 0; i < ja.size(); i++) {
+//                    JsonObject job = ja.get(i);
+//                    jas.putJsonArray(job);
+//                }
                 instance = jas;
                 break;
             default:
@@ -264,7 +266,7 @@ public class MangoBodyBuilder {
         final DataPointSummaryModel model = new DataPointSummaryModel();
         final String name = ob.get("name");
 
-        NodeBuilder b = node.createChild((String) ob.get("xid"));
+        NodeBuilder b = node.createChild((String) ob.get("xid"), false);
         {
             b.setSerializable(false);
             b.setDisplayName(name);
@@ -341,9 +343,19 @@ public class MangoBodyBuilder {
             n.setWritable(Writable.WRITE);
             n.getListener().setValueHandler(new SetPointHandler(n));
         }
-        final ArrayList<Node> nodesToUpdate = folder.getNodesToUpdate();
-        if (!nodesToUpdate.contains(n))
-            nodesToUpdate.add(n);
+        n.getListener().setOnSubscribeHandler(new Handler<Node>() {
+        	public void handle(Node event) {
+        		final Set<Node> nodesToUpdate = folder.getNodesToUpdate();
+                if (!nodesToUpdate.contains(event)) nodesToUpdate.add(event);
+        	}
+        });
+        n.getListener().setOnUnsubscribeHandler(new Handler<Node>() {
+        	public void handle(Node event) {
+        		final Set<Node> nodesToUpdate = folder.getNodesToUpdate();
+        		if (nodesToUpdate.contains(event)) nodesToUpdate.remove(event);
+        	}
+        });
+        
         return plvo;
     }
 
@@ -407,6 +419,6 @@ public class MangoBodyBuilder {
     //set actions to each data point
     private void setActions(Node node) {
         Action deleteAct = folder.deleteAction(node);
-        node.createChild("delete").setAction(deleteAct).setSerializable(false).build();
+        node.createChild("delete", false).setAction(deleteAct).setSerializable(false).build();
     }
 }
