@@ -623,7 +623,7 @@ public class ApiClient {
        responseHeaders = response.getHeaders();
        
        for(NewCookie cookie : response.getCookies()) {
-           LOGGER.info("New cookie: " + cookie.getName() + "-->" + cookie.getValue() + "{ " + cookie + "}");
+           LOGGER.info("New cookie: " + cookie.getName() + "--> " + cookie.getValue() + " { " + cookie + "}");
            if(cookie.getValue() == null ||  cookie.getValue().length() == 0)
                continue;
            if(cookie.getName().equals("XSRF-TOKEN"))

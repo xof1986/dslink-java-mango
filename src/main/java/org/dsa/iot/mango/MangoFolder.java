@@ -200,9 +200,11 @@ public class MangoFolder {
                             }
                             conn.setClientNode(original);
                         } catch (ApiException e) {
+                            LOGGER.error(e.getMessage(), e);
                             LOGGER.error("Data point has no data - {}", no.getDisplayName());
                             no.setValue(null);
                         } catch (NumberFormatException e) {
+                            LOGGER.error(e.getMessage(), e);
                             LOGGER.error("Point Update error - {}", e);
                             no.setValue(null);
                         }
