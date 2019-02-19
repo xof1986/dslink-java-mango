@@ -5,7 +5,6 @@ import java.util.UUID;
 import javax.ws.rs.core.Cookie;
 
 import org.dsa.iot.dslink.node.Node;
-import org.dsa.iot.dslink.node.value.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,9 +25,6 @@ public class MangoConn {
     private Node node;
     private ApiClient client;
     private MangoDSLApi api;
-
-    //TODO For testing, this would be an input from the UI eventually
-    private String apiKey = "eyJhbGciOiJFUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU4OTgyMzA0OCwiaWQiOjEsInYiOjEsInR5cCI6ImF1dGgifQ.AFW0A_wXbgq98kBBQAF3EZuWnvT0ay0p_EReHtceAmRDkh3C-b-WREofwdOfGmzgOyqd4yGXLpK7xA-sfpdUJ6IIAKLuRB1U0EBX54QqepW4h_wlBYLeX3dFIfOMoLopNM4fNKBIH5X47HzXAGNKnheIYD3SGihwPLgzsoUBt-lal8au";
     
     public MangoDSLApi getApi() {
         return api;
@@ -61,10 +57,7 @@ public class MangoConn {
     //initialize global variables
     public MangoConn(MangoLink link, Node child) {
         this.link = link;
-        this.node = child;
-        
-        //TODO Setup UI to allow auth Type
-        this.node.setAttribute("authType", new Value(AuthenticationType.USER.name()));
+        this.node = child;        
     }
 
     //set up the API client and the Mango for Java DSL API framework
@@ -106,6 +99,7 @@ public class MangoConn {
                 case TOKEN:
                     ApiKeyAuth auth = (ApiKeyAuth)client.getAuthentication("token");
                     auth.setApiKeyPrefix("Bearer");
+                    String apiKey = node.getAttribute("apiKey").toString();
                     auth.setApiKey(apiKey);
                     api.getCurrentUser();
                     break;
