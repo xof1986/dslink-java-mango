@@ -16,7 +16,7 @@ public class LoggingProperties   {
   
 
   public enum TypeEnum {
-      ALL("ALL"), INTERVAL("INTERVAL"), NONE("NONE"), ON_CHANGE("ON_CHANGE"), ON_TS_CHANGE("ON_TS_CHANGE");
+      ALL("ALL"), INTERVAL("INTERVAL"), NONE("NONE"), ON_CHANGE("ON_CHANGE"), ON_TS_CHANGE("ON_TS_CHANGE"), ON_CHANGE_INTERVAL("ON_CHANGE_INTERVAL");
 
       private String value;
 
